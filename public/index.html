@@ -2481,9 +2481,172 @@ text-overflow: clip;
   <div class="lk-toast" id="lk-toast"></div>
 
   <script>
-    /* ============================================================
+    /*
+// ============ ONLINE SETUP ============
+let deviceId = localStorage.getItem('ludo_device');
+if (!deviceId) {
+  deviceId = 'DEV-' + Math.random().toString(36).slice(2, 12);
+  localStorage.setItem('ludo_device', deviceId);
+}
+let socket = null;
+let myOnlineUid = null;
+let currentRoomId = null;
+let onlineRoomsCache = [];
+
+async function loginToServer() {
+  try {
+    const res = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        deviceId,
+        name: profile ? profile.name : 'Guest',
+        avatar: profile ? profile.avatar : '👨‍💼'
+      })
+    });
+    const data = await res.json();
+    if (data.user) {
+      myOnlineUid = data.user.uid;
+      if (profile) {
+        profile.uid = data.user.uid;
+        if (data.user.coins) profile.coins = data.user.coins;
+        saveProfile();
+      }
+      connectSocket();
+    }
+  } catch (e) { console.log('login failed', e); }
+}
+
+function connectSocket() {
+  if (typeof io === 'undefined') return;
+  socket = io();
+  socket.on('connect', () => {
+    socket.emit('register', { uid: myOnlineUid });
+    socket.emit('room:list', (list) => {
+      onlineRoomsCache = list || [];
+      renderOnlineRooms();
+    });
+  });
+  socket.on('room:list', (list) => {
+    onlineRoomsCache = list || [];
+    renderOnlineRooms();
+  });
+  socket.on('room:update', (room) => {
+    showToast('👥 ' + room.players.length + '/' + room.maxPlayers + ' জন যোগ দিয়েছে');
+  });
+  socket.on('room:start', (room) => {
+    showToast('🎯 সব খেলোয়াড় এসেছে! শুরু হচ্ছে...');
+    startOnlineMatch(room);
+  });
+  socket.on('chat:message', (msg) => {
+    const conv = getOrCreateConversation(profile.uid, msg.from);
+    conv.messages.push({ sender_id: msg.from, text: msg.text, timestamp: msg.ts, read: false });
+    conv.last_updated = msg.ts;
+    saveConversationsDB();
+    updateInboxBadge();
+    if (currentChatUserId === msg.from) {
+      markConversationRead(profile.uid, msg.from);
+      renderChatMessages();
+    } else {
+      showToast('💬 নতুন মেসেজ!');
+    }
+  });
+  socket.on('game:action', ({ from, action }) => {
+    if (action.type === 'dice') {
+      diceValue = action.value;
+      const faces = ['⚀','⚁','⚂','⚃','⚄','⚅'];
+      const el = document.getElementById('dice-' + action.player);
+      if (el) el.innerText = faces[diceValue - 1];
+      playDiceRollSound();
+    }
+  });
+}
+
+function renderOnlineRooms() {
+  const list = document.getElementById('gr-list');
+  if (!list) return;
+  list.innerHTML = '';
+  if (onlineRoomsCache.length === 0) {
+    list.innerHTML = '<div class="gr-empty">🌐 এই মুহূর্তে কোনো খোলা রুম নেই।<br>➕ নতুন রুম তৈরি করুন!</div>';
+    return;
+  }
+  onlineRoomsCache.forEach(room => {
+    const card = document.createElement('div');
+    card.className = 'gr-room-card' + (room.players[0].uid === myOnlineUid ? ' mine' : '');
+    card.innerHTML = `
+      <div class="gr-room-header">
+        <div class="gr-creator-avatar">${room.players[0].avatar}</div>
+        <div class="gr-creator-info">
+          <div class="gr-creator-name">${room.players[0].name}</div>
+          <div class="gr-coin-line">🪙 ${room.betAmount} Coins · ${room.mode === '1v1' ? '1 vs 1' : '4 Player'}</div>
+        </div>
+      </div>
+      <div class="gr-slots">
+        ${Array.from({length: room.maxPlayers}).map((_, i) => {
+          const p = room.players[i];
+          return p
+            ? `<div class="gr-slot filled"><div class="gr-slot-avatar">${p.avatar}</div><div class="gr-slot-name">${p.name}</div></div>`
+            : `<div class="gr-slot empty" onclick="joinOnlineRoom('${room.roomId}')"><div class="gr-slot-join">➕</div><div class="gr-slot-join-label">JOIN</div></div>`;
+        }).join('')}
+      </div>
+    `;
+    list.appendChild(card);
+  });
+}
+
+function joinOnlineRoom(roomId) {
+  const room = onlineRoomsCache.find(r => r.roomId === roomId);
+  if (!room) return;
+  if (profile.coins < room.betAmount) { showToast('⚠️ পর্যাপ্ত কয়েন নেই'); return; }
+  socket.emit('room:join', { roomId, user: { uid: myOnlineUid, name: profile.name, avatar: profile.avatar } }, (res) => {
+    if (res.ok) {
+      currentRoomId = roomId;
+      profile.coins -= room.betAmount;
+      LudoAuth.setBalance(profile.coins);
+      showToast('✅ জয়েন সফল!');
+    }
+  });
+}
+
+function startOnlineMatch(room) {
+  currentRoomId = room.roomId;
+  const vsPlayers = room.players.map((p, i) => {
+    const colors = room.mode === '1v1' ? ['blue', 'green'] : ['blue', 'red', 'green', 'yellow'];
+    return { color: colors[i], name: p.name, avatar: p.avatar, isMe: p.uid === myOnlineUid };
+  });
+  document.getElementById('global-room-screen').classList.add('hidden');
+  showVSScreen(vsPlayers, room.mode, () => { startGame(room.mode, true, room.players.length); });
+}
+
+function confirmCreateRoom() {
+  const amt = crCoin;
+  if (!amt || amt < 10) { showToast('সর্বনিম্ন ১০ কয়েন'); return; }
+  if (amt > profile.coins) { showToast('⚠️ পর্যাপ্ত কয়েন নেই'); return; }
+  if (!socket) { showToast('সার্ভারে কানেক্ট হচ্ছে...'); return; }
+  socket.emit('room:create', { mode: crMode, betAmount: amt, user: { uid: myOnlineUid, name: profile.name, avatar: profile.avatar } }, (res) => {
+    if (res.ok) {
+      currentRoomId = res.room.roomId;
+      profile.coins -= amt;
+      LudoAuth.setBalance(profile.coins);
+      closeCreateRoom();
+      document.getElementById('global-room-screen').classList.remove('hidden');
+      showToast('✅ রুম তৈরি: ' + res.room.roomId);
+    }
+  });
+}
+
+function sendChatMessage() {
+  if (!currentChatUserId || !socket) return;
+  const inp = document.getElementById('chat-input');
+  const text = (inp.value || '').trim();
+  if (!text) return;
+  socket.emit('chat:send', { toUid: currentChatUserId, text });
+  inp.value = '';
+}
+// ============ END ONLINE SETUP ============ ============================================================
        ======================  PROFILE / ACCOUNT  =================
        ============================================================ */
+
     const STORAGE_KEY = 'ludoking_profile_v1';
     const SETTINGS_KEY = 'ludoking_settings_v1';
 
