@@ -1827,6 +1827,32 @@ text-overflow: clip;
     transform: translateY(30px);
 }
   </style>
+  <!-- ================= FIREBASE (REAL ONLINE BACKEND) =================
+       নিচের firebaseConfig অবশ্যই আপনার নিজের Firebase প্রজেক্টের কনফিগ দিয়ে
+       পরিবর্তন করতে হবে। কীভাবে বানাবেন তার ধাপ ধাপ গাইড নিচে চ্যাটে দেওয়া আছে।
+  -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+  apiKey: "AIzaSyCm9ejFGyKZo1BVHeq3aBO6U02YUdR_2QM",
+  authDomain: "ludu-369.firebaseapp.com",
+  databaseURL: "https://ludu-369-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "ludu-369",
+  storageBucket: "ludu-369.firebasestorage.app",
+  messagingSenderId: "394106006538",
+  appId: "1:394106006538:web:b8ba264ae339f5320543f3"
+};
+    let fbDB = null;
+    let fbReady = false;
+    try {
+      firebase.initializeApp(firebaseConfig);
+      fbDB = firebase.database();
+      fbReady = true;
+    } catch (e) {
+      console.error('Firebase init failed — এখনও firebaseConfig বসানো হয়নি।', e);
+    }
+  </script>
 </head>
 <body>
 
@@ -2166,7 +2192,7 @@ text-overflow: clip;
         </button>
         <button class="matchtype-btn bet" onclick="chooseBetMatch()">
           <div class="mt-icon">💰</div>
-          <div class="mt-title">বাজি ম্যাচ</div>
+          <div class="mt-title">কয়েন ম্যাচ</div>
           <div class="mt-desc">এন্ট্রি ফি দিয়ে জিতুন</div>
         </button>
       </div>
@@ -2431,8 +2457,8 @@ text-overflow: clip;
         <li><span class="ht-ico">🔁</span><span><b>৬</b> পড়লে চাল দেওয়ার পর আপনি আবার ডায়াইস চালানোর সুযোগ পাবেন।</span></li>
         <li><span class="ht-ico">⚔️</span><span>প্রতিপক্ষের গুটির ঘরে গেলে সেটি <b>কাটা</b> পড়ে ইয়ার্ডে ফিরে যায় — আর আপনি বোনাস চাল পান।</span></li>
         <li><span class="ht-ico">⭐</span><span><b>তারাযুক্ত ঘর</b> হলো সেফ জোন। সেখানে কোনো গুটি কাটা যায় না।</span></li>
-        <li><span class="ht-ico">💰</span><span><b>বাজি ম্যাচে</b> এন্ট্রি ফি দিয়ে খেলুন। যে জিতবে সে মোট পুল থেকে <b>১০% সিস্টেম ফি</b> বাদ দিয়ে বাকি সব প্রাইজ হিসেবে পাবে।</span></li>
-        <li><span class="ht-ico">⚠️</span><span><b>রুম বাতিল বা টাইম শেষ</b> হলে সব খেলোয়াড়ের <b>সম্পূর্ণ টাকা ফেরত</b> পাবেন। কিন্তু <b>ম্যাচ চলাকালীন বের হলে</b> শুধু বের হওয়া খেলোয়াড়ের <b>৩০% টাকা কাটা</b> হবে, বাকি ৭০% ফেরত পাবে।</span></li>
+        <li><span class="ht-ico">💰</span><span><b>কয়েন ম্যাচে</b> এন্ট্রি ফি দিয়ে খেলুন। যে জিতবে সে মোট পুল থেকে <b>১০% সিস্টেম ফি</b> বাদ দিয়ে বাকি সব প্রাইজ হিসেবে পাবে।</span></li>
+        <li><span class="ht-ico">⚠️</span><span><b>রুম বাতিল বা টাইম শেষ</b> হলে সব খেলোয়াড়ের <b>সম্পূর্ণ কয়েন ফেরত</b> পাবেন। কিন্তু <b>ম্যাচ চলাকালীন বের হলে</b> শুধু বের হওয়া খেলোয়াড়ের <b>৩০% কয়েন কাটা</b> হবে, বাকি ৭০% ফেরত পাবে।</span></li>
         <li><span class="ht-ico">👥</span><span><b>বন্ধু সিস্টেমে</b> UID সার্চ করে ফ্রেন্ড রিকোয়েস্ট পাঠান, গ্রহণ করুন।</span></li>
         <li><span class="ht-ico">💬</span><span><b>ইনবক্সে</b> যেকোনো ইউজারের সাথে চ্যাট করুন। Message বাটনে ক্লিক করলেই নতুন বা পুরোনো চ্যাট ওপেন হবে।</span></li>
         <li><span class="ht-ico">🏆</span><span>যে খেলোয়াড় সবার আগে <b>৪টি গুটি</b> হোমে পৌঁছাবে, সে-ই বিজয়ী।</span></li>
@@ -2971,23 +2997,23 @@ text-overflow: clip;
       const pool = amt * players;
       const fee = Math.round(pool * SYSTEM_FEE_RATE);
       const prize = pool - fee;
-      elEntry.innerText = formatCoins(amt) + ' টাকা';
+      elEntry.innerText = formatCoins(amt) + ' কয়েন';
       elPlayers.innerText = players + ' জন';
-      elPool.innerText = formatCoins(pool) + ' টাকা';
-      elFee.innerText = formatCoins(fee) + ' টাকা';
-      elPrize.innerText = formatCoins(prize) + ' টাকা';
+      elPool.innerText = formatCoins(pool) + ' কয়েন';
+      elFee.innerText = formatCoins(fee) + ' কয়েন';
+      elPrize.innerText = formatCoins(prize) + ' কয়েন';
 
       let noteText;
       if (players === 2) {
-        noteText = `আপনি ও আপনার বন্ধু ${formatCoins(amt)} টাকা করে দিলে মোট পুল ${formatCoins(pool)} টাকা। যে জিতবে সে পাবে ${formatCoins(prize)} টাকা (${formatCoins(fee)} টাকা সিস্টেম ফি)।`;
+        noteText = `আপনি ও আপনার বন্ধু ${formatCoins(amt)} কয়েন করে দিলে মোট পুল ${formatCoins(pool)} কয়েন। যে জিতবে সে পাবে ${formatCoins(prize)} কয়েন (${formatCoins(fee)} কয়েন সিস্টেম ফি)।`;
       } else {
-        noteText = `চারজন খেলোয়াড় ${formatCoins(amt)} টাকা করে দিলে মোট পুল ${formatCoins(pool)} টাকা। যে জিতবে সে পাবে ${formatCoins(prize)} টাকা (${formatCoins(fee)} টাকা সিস্টেম ফি)।`;
+        noteText = `চারজন খেলোয়াড় ${formatCoins(amt)} কয়েন করে দিলে মোট পুল ${formatCoins(pool)} কয়েন। যে জিতবে সে পাবে ${formatCoins(prize)} কয়েন (${formatCoins(fee)} কয়েন সিস্টেম ফি)।`;
       }
       elNote.innerText = noteText;
 
       let warn = '';
-      if (amt < MIN_BET) warn = `⚠️ সর্বনিম্ন এন্ট্রি ফি ${MIN_BET} টাকা।`;
-      else if (amt > profile.coins) warn = `⚠️ আপনার ব্যালেন্স যথেষ্ট নয়। প্রয়োজন ${formatCoins(amt)} টাকা, আছে ${formatCoins(profile.coins)} টাকা।`;
+      if (amt < MIN_BET) warn = `⚠️ সর্বনিম্ন এন্ট্রি ফি ${MIN_BET} কয়েন।`;
+      else if (amt > profile.coins) warn = `⚠️ আপনার ব্যালেন্স যথেষ্ট নয়। প্রয়োজন ${formatCoins(amt)} কয়েন, আছে ${formatCoins(profile.coins)} কয়েন।`;
 
       if (warn) {
         elWarn.innerText = warn;
@@ -3005,7 +3031,7 @@ text-overflow: clip;
     function startBetMatch() {
       const amt = pendingBetAmount;
       const players = pendingGameMode === '1v1' ? 2 : 4;
-      if (!amt || amt < MIN_BET) { showToast(`⚠️ সর্বনিম্ন ${MIN_BET} টাকা এন্ট্রি ফি দিন`); return; }
+      if (!amt || amt < MIN_BET) { showToast(`⚠️ সর্বনিম্ন ${MIN_BET} কয়েন এন্ট্রি ফি দিন`); return; }
       if (amt > profile.coins) { showToast(`⚠️ আপনার ব্যালেন্স যথেষ্ট নয়`); return; }
 
       const pool = amt * players;
@@ -3184,7 +3210,7 @@ text-overflow: clip;
       if (currentRoom.timers) currentRoom.timers.forEach(t => clearTimeout(t));
       currentRoom = null;
       vibrate([40, 25, 40, 25, 80]);
-      showToast(`💰 ${formatCoins(amt)} টাকা এন্ট্রি কাটা হয়েছে। শুভ কামনা!`);
+      showToast(`💰 ${formatCoins(amt)} কয়েন এন্ট্রি কাটা হয়েছে। শুভ কামনা!`);
       showVSScreen(vsPlayers, mode, () => {
         startGame(mode, true, players);
       });
@@ -3196,7 +3222,7 @@ text-overflow: clip;
       if (refundAmt > 0) {
         profile.coins += refundAmt;
         LudoAuth.setBalance(profile.coins);
-        showToast(`💰 রুম বাতিল — ${formatCoins(refundAmt)} টাকা সম্পূর্ণ ফেরত পেয়েছেন`);
+        showToast(`💰 রুম বাতিল — ${formatCoins(refundAmt)} কয়েন সম্পূর্ণ ফেরত পেয়েছেন`);
       }
       if (currentRoom.timers) currentRoom.timers.forEach(t => clearTimeout(t));
       currentRoom = null;
@@ -3215,7 +3241,7 @@ text-overflow: clip;
     function buildRoomMessage() {
       if (!currentRoom) return '';
       const code = 'LK-' + currentRoom.code;
-      return `🎲 Ludo King বাজি ম্যাচ!\n\n🔗 রুম কোড: ${code}\n💰 এন্ট্রি ফি: ${formatCoins(currentRoom.amount)} টাকা\n👥 খেলোয়াড়: ${currentRoom.players} জন\n🏆 প্রাইজ: ${formatCoins(currentRoom.prize)} টাকা\n\nখেলতে যোগ দিন!`;
+      return `🎲 Ludo King কয়েন ম্যাচ!\n\n🔗 রুম কোড: ${code}\n💰 এন্ট্রি ফি: ${formatCoins(currentRoom.amount)} কয়েন\n👥 খেলোয়াড়: ${currentRoom.players} জন\n🏆 প্রাইজ: ${formatCoins(currentRoom.prize)} কয়েন\n\nখেলতে যোগ দিন!`;
     }
     function buildRoomLink() {
       const code = currentRoom ? ('LK-' + currentRoom.code) : '';
@@ -3232,7 +3258,7 @@ text-overflow: clip;
         catch (e) { fallbackCopy(fullMsg, () => showToast('মেসেজ কপি হয়েছে — WhatsApp-এ পেস্ট করুন')); }
       } else if (platform === 'messenger') {
         if (navigator.share) {
-          navigator.share({ title: 'Ludo King বাজি ম্যাচ', text: msg, url: link })
+          navigator.share({ title: 'Ludo King কয়েন ম্যাচ', text: msg, url: link })
             .catch(() => fallbackCopy(fullMsg, () => showToast('মেসেজ কপি হয়েছে — Messenger-এ পেস্ট করুন')));
         } else fallbackCopy(fullMsg, () => showToast('মেসেজ কপি হয়েছে — Messenger-এ পেস্ট করুন'));
       } else fallbackCopy(fullMsg, () => showToast('রুম লিংক কপি হয়েছে!'));
@@ -3242,6 +3268,53 @@ text-overflow: clip;
        ============  GLOBAL ROOM SYSTEM  =========================
        ============================================================ */
     let globalRooms = [];
+    let roomsListenerAttached = false;
+    let startedMatchRoomIds = new Set();
+    let refundsListenerAttached = false;
+
+    // /rooms নোডে রিয়েল-টাইম লিসেন করে — যে কেউ রুম বানালে/জয়েন করলে/বাতিল
+    // করলে সবার ফোনে সাথে সাথে লবি আপডেট হবে।
+    function attachRoomsListener() {
+      if (roomsListenerAttached || !fbReady) return;
+      roomsListenerAttached = true;
+      fbDB.ref('rooms').on('value', (snap) => {
+        const data = snap.val() || {};
+        const now = Date.now();
+        const all = Object.values(data);
+        globalRooms = all.filter(r => r.status === 'waiting' && r.expiresAt > now);
+        renderGlobalRooms();
+
+        // আমি যে রুমে আছি সেটা এইমাত্র পূর্ণ হয়ে গেলে — আমার ডিভাইসেও ম্যাচ শুরু করাও
+        all.forEach(r => {
+          if (r.status === 'full' && r.players.some(p => p.id === profile.uid) && !startedMatchRoomIds.has(r.room_id)) {
+            startedMatchRoomIds.add(r.room_id);
+            startCountdownAndStart(r);
+          }
+        });
+      });
+    }
+    function detachRoomsListener() {
+      if (!roomsListenerAttached || !fbReady) return;
+      roomsListenerAttached = false;
+      fbDB.ref('rooms').off();
+    }
+
+    // আমার প্রাপ্য কয়েন-রিফান্ড (রুম বাতিল হলে) — যে ডিভাইস থেকেই বাতিল হোক
+    // না কেন, আমার নিজের ডিভাইসে এসে কয়েন যোগ হবে।
+    function attachRefundsListener() {
+      if (refundsListenerAttached || !fbReady || !profile || !profile.uid) return;
+      refundsListenerAttached = true;
+      fbDB.ref('refunds/' + profile.uid).on('child_added', (snap) => {
+        const data = snap.val();
+        if (data && data.amount) {
+          profile.coins += data.amount;
+          LudoAuth.setBalance(profile.coins);
+          saveProfile();
+          showToast(`💰 ${formatCoins(data.amount)} কয়েন ফেরত পেয়েছেন (${data.reason || 'রুম বাতিল'})`);
+        }
+        snap.ref.remove();
+      });
+    }
     let roomTickInterval = null;
     let paCurrentUserId = null;
 
@@ -3261,12 +3334,15 @@ text-overflow: clip;
       getAudioCtx();
       document.getElementById('mode-screen').classList.add('hidden');
       document.getElementById('global-room-screen').classList.remove('hidden');
+      attachRoomsListener();
       renderGlobalRooms();
       startRoomTick();
     }
     function closeGlobalRoom() {
       document.getElementById('global-room-screen').classList.add('hidden');
       document.getElementById('mode-screen').classList.remove('hidden');
+      detachRoomsListener();
+      if (roomTickInterval) { clearInterval(roomTickInterval); roomTickInterval = null; }
     }
 
     function renderGlobalRooms() {
@@ -3348,7 +3424,7 @@ text-overflow: clip;
       return card;
     }
 
-    function attemptJoinRoom(room) {
+    async function attemptJoinRoom(room) {
       if (room.status !== 'waiting') { showToast('এই রুম আর খোলা নেই'); return; }
       if (room.players.some(p => p.id === profile.uid)) { showToast('আপনি ইতিমধ্যেই এই রুমে আছেন'); return; }
       if (room.players.length >= room.maxPlayers) { showToast('রুম পূর্ণ!'); return; }
@@ -3357,21 +3433,32 @@ text-overflow: clip;
         showToast(`⚠️ পর্যাপ্ত কয়েন নেই! প্রয়োজন ${formatCoins(room.coin_amount)}, আছে ${formatCoins(profile.coins)}`);
         return;
       }
+      if (!fbReady) { showToast('⚠️ Firebase কনফিগ করা হয়নি'); return; }
+
+      const roomRef = fbDB.ref('rooms/' + room.room_id);
+      let result;
+      try {
+        result = await roomRef.transaction((current) => {
+          if (!current || current.status !== 'waiting') return current;
+          if (!Array.isArray(current.players)) current.players = [];
+          if (current.players.some(p => p.id === profile.uid)) return current;
+          if (current.players.length >= current.maxPlayers) return current;
+          current.players.push({ id: profile.uid, name: profile.name, photo: profile.avatar, isCreator: false });
+          if (current.players.length >= current.maxPlayers) current.status = 'full';
+          return current;
+        });
+      } catch (e) { showToast('⚠️ এরর হয়েছে, আবার চেষ্টা করুন'); return; }
+
+      if (!result.committed || !result.snapshot.exists()) { showToast('⚠️ জয়েন করা যায়নি, আবার চেষ্টা করুন'); return; }
+      const updatedRoom = result.snapshot.val();
+      if (!updatedRoom.players.some(p => p.id === profile.uid)) { showToast('রুম পূর্ণ হয়ে গেছে!'); return; }
 
       profile.coins -= room.coin_amount;
       LudoAuth.setBalance(profile.coins);
-
-      room.players.push({ id: profile.uid, name: profile.name, photo: profile.avatar, isCreator: false });
       vibrate(30);
       showToast(`✅ জয়েন সম্পন্ন! ${formatCoins(room.coin_amount)} কয়েন কাটা হয়েছে।`);
-
-      if (room.players.length >= room.maxPlayers) {
-        room.status = 'full';
-        renderGlobalRooms();
-        startCountdownAndStart(room);
-      } else {
-        renderGlobalRooms();
-      }
+      // রুম পূর্ণ হলে ম্যাচ শুরু হবে attachRoomsListener-এর মাধ্যমে (সব প্লেয়ারের
+      // ডিভাইসেই একইসাথে ট্রিগার হবে) — এখানে আলাদা করে কিছু লেখার দরকার নেই।
     }
 
     function startCountdownAndStart(room) {
@@ -3387,6 +3474,7 @@ text-overflow: clip;
           beginGlobalMatch(room);
         }
       }, 1000);
+      room.timers = room.timers || [];
       room.timers.push(int);
     }
 
@@ -3426,45 +3514,45 @@ text-overflow: clip;
       });
     }
 
-    function cancelGlobalRoom(roomId) {
-      const idx = globalRooms.findIndex(r => r.room_id === roomId);
-      if (idx < 0) return;
-      const room = globalRooms[idx];
-      refundRoom(room, 'রুম বাতিল');
-      if (room.timers) room.timers.forEach(t => { clearInterval(t); clearTimeout(t); });
-      room.status = 'cancelled';
-      globalRooms.splice(idx, 1);
-      renderGlobalRooms();
-      showToast('রুম বাতিল — সম্পূর্ণ কয়েন ফেরত দেওয়া হয়েছে');
+    async function cancelGlobalRoom(roomId) {
+      const room = globalRooms.find(r => r.room_id === roomId);
+      if (!room) return;
+      if (room.creator_id !== profile.uid) return;
+      if (!fbReady) { showToast('⚠️ Firebase কনফিগ করা হয়নি'); return; }
+
+      try {
+        const updates = {};
+        (room.players || []).forEach(p => {
+          updates['refunds/' + p.id + '/' + roomId] = { amount: room.coin_amount, reason: 'রুম বাতিল', ts: Date.now() };
+        });
+        updates['rooms/' + roomId] = null;
+        await fbDB.ref().update(updates);
+      } catch (e) { showToast('⚠️ এরর হয়েছে, আবার চেষ্টা করুন'); return; }
+      // কয়েন ফেরত attachRefundsListener এর মাধ্যমে সবার ডিভাইসেই এসে যাবে
     }
 
     function refundRoom(room, reason) {
-      room.players.forEach(player => {
-        if (player.id === profile.uid) {
-          profile.coins += room.coin_amount;
-          LudoAuth.setBalance(profile.coins);
-          showToast(`💰 ${formatCoins(room.coin_amount)} কয়েন সম্পূর্ণ ফেরত পেয়েছেন (${reason})`);
-        }
-      });
+      // fallback (fbReady না থাকলে) — শুধু নিজের ডিভাইসের কয়েন সরাসরি ফেরত
+      if (!fbReady) {
+        (room.players || []).forEach(player => {
+          if (player.id === profile.uid) {
+            profile.coins += room.coin_amount;
+            LudoAuth.setBalance(profile.coins);
+            showToast(`💰 ${formatCoins(room.coin_amount)} কয়েন সম্পূর্ণ ফেরত পেয়েছেন (${reason})`);
+          }
+        });
+      }
     }
 
     function startRoomTick() {
       if (roomTickInterval) return;
       roomTickInterval = setInterval(() => {
         const now = Date.now();
-        let changed = false;
         globalRooms.slice().forEach(room => {
-          if (room.status === 'waiting' && room.expiresAt <= now) {
-            refundRoom(room, 'সময় শেষ');
-            if (room.timers) room.timers.forEach(t => { clearInterval(t); clearTimeout(t); });
-            room.status = 'cancelled';
-            changed = true;
+          if (room.status === 'waiting' && room.expiresAt <= now && room.creator_id === profile.uid) {
+            cancelGlobalRoom(room.room_id);
           }
         });
-        if (changed) {
-          globalRooms = globalRooms.filter(r => r.status === 'waiting');
-          renderGlobalRooms();
-        }
         document.querySelectorAll('.gr-time').forEach(el => {
           const r = globalRooms.find(x => x.room_id === el.dataset.roomId);
           if (r) el.innerText = formatTimeLeft(r.expiresAt - now);
@@ -3508,14 +3596,12 @@ text-overflow: clip;
       document.getElementById('cr-balance-val').innerText = formatCoins(profile.coins);
     }
 
-    function confirmCreateRoom() {
+    async function confirmCreateRoom() {
       const amt = crCoin;
       if (!amt || amt < 10) { showToast('সর্বনিম্ন ১০ কয়েন এন্ট্রি দিন'); return; }
       if (amt > profile.coins) { showToast('⚠️ পর্যাপ্ত কয়েন নেই!'); return; }
       if (isUserInAnyRoom()) { showToast('আপনি ইতিমধ্যে একটি রুমে আছেন'); return; }
-
-      profile.coins -= amt;
-      LudoAuth.setBalance(profile.coins);
+      if (!fbReady) { showToast('⚠️ Firebase কনফিগ করা হয়নি — রুম বানানো যাবে না'); return; }
 
       const maxPlayers = crMode === '1v1' ? 2 : 4;
       const room = {
@@ -3529,13 +3615,18 @@ text-overflow: clip;
         players: [{ id: profile.uid, name: profile.name, photo: profile.avatar, isCreator: true }],
         status: 'waiting',
         createdAt: Date.now(),
-        expiresAt: Date.now() + ROOM_EXPIRE_MS,
-        timers: []
+        expiresAt: Date.now() + ROOM_EXPIRE_MS
       };
-      globalRooms.push(room);
+
+      try {
+        await fbDB.ref('rooms/' + room.room_id).set(room);
+      } catch (e) { showToast('⚠️ রুম তৈরি করা যায়নি, আবার চেষ্টা করুন'); return; }
+
+      profile.coins -= amt;
+      LudoAuth.setBalance(profile.coins);
       closeCreateRoom();
-      showToast(`✅ রুম তৈরি! ${formatCoins(amt)} কয়েন কাটা হয়েছে।`);
-      renderGlobalRooms();
+      showToast(`✅ রুম তৈরি! ${formatCoins(amt)} কয়েন কাটা হয়েছে। এখন বন্ধুরা এটা লবিতে দেখতে পাবে।`);
+      // globalRooms লিস্ট attachRoomsListener এর মাধ্যমে অটো-আপডেট হবে
     }
 
     /* ================= PROFILE ACTION POPUP ================= */
@@ -3622,12 +3713,12 @@ text-overflow: clip;
     function openExitConfirm() {
       const t = document.getElementById('exit-text');
       if (currentRoom) {
-        t.innerText = `⚠️ আপনি একটি রুমে আছেন (কোড: LK-${currentRoom.code})।\n\nবের হলে রুম বাতিল হবে — ${formatCoins(currentRoom.amount)} টাকা সম্পূর্ণ ফেরত পাবেন।\n\nনিশ্চিত?`;
+        t.innerText = `⚠️ আপনি একটি রুমে আছেন (কোড: LK-${currentRoom.code})।\n\nবের হলে রুম বাতিল হবে — ${formatCoins(currentRoom.amount)} কয়েন সম্পূর্ণ ফেরত পাবেন।\n\nনিশ্চিত?`;
       } else if (gameActive && currentBetInfo) {
         const entry = currentBetInfo.amount;
         const penalty = Math.round(entry * CANCEL_PENALTY_RATE);
         const refund = entry - penalty;
-        t.innerText = `⚠️ গেম চলছে!\n\nবের হলে আপনার এন্ট্রি ফি ${formatCoins(entry)} টাকা থেকে:\n• ${formatCoins(penalty)} টাকা কাটা হবে (৩০%)\n• ${formatCoins(refund)} টাকা ফেরত পাবেন (৭০%)\n\nপ্রতিপক্ষের টাকা অক্ষত থাকবে।\n\nনিশ্চিত?`;
+        t.innerText = `⚠️ গেম চলছে!\n\nবের হলে আপনার এন্ট্রি ফি ${formatCoins(entry)} কয়েন থেকে:\n• ${formatCoins(penalty)} কয়েন কাটা হবে (৩০%)\n• ${formatCoins(refund)} কয়েন ফেরত পাবেন (৭০%)\n\nপ্রতিপক্ষের কয়েন অক্ষত থাকবে।\n\nনিশ্চিত?`;
       } else {
         t.innerText = 'বর্তমান খেলাটি হারিয়ে যাবে। আপনি কি নিশ্চিত?';
       }
@@ -3645,7 +3736,7 @@ text-overflow: clip;
       const refund = entry - penalty;
       profile.coins += refund;
       LudoAuth.setBalance(profile.coins);
-      showToast(`❌ আপনি গেম ছেড়েছেন। ${formatCoins(penalty)} টাকা কাটা (৩০%), ${formatCoins(refund)} টাকা ফেরত (৭০%)।`);
+      showToast(`❌ আপনি গেম ছেড়েছেন। ${formatCoins(penalty)} কয়েন কাটা (৩০%), ${formatCoins(refund)} কয়েন ফেরত (৭০%)।`);
       gameActive = false;
       currentBetInfo = null;
       document.getElementById('bet-badge').classList.remove('show');
@@ -3656,7 +3747,7 @@ text-overflow: clip;
       const myEntry = currentBetInfo.amount;
       profile.coins += myEntry;
       LudoAuth.setBalance(profile.coins);
-      showToast(`🏆 প্রতিপক্ষ (${quitterColor}) গেম ছেড়েছে! আপনার ${formatCoins(myEntry)} টাকা সম্পূর্ণ ফেরত পেয়েছেন।`);
+      showToast(`🏆 প্রতিপক্ষ (${quitterColor}) গেম ছেড়েছে! আপনার ${formatCoins(myEntry)} কয়েন সম্পূর্ণ ফেরত পেয়েছেন।`);
       gameActive = false;
       currentBetInfo = null;
       document.getElementById('bet-badge').classList.remove('show');
@@ -4203,9 +4294,9 @@ text-overflow: clip;
         if (isPlayerWin) {
           profile.coins += prize;
           LudoAuth.setBalance(profile.coins);
-          showToast(`🏆 আপনি ${formatCoins(prize)} টাকা প্রাইজ জিতেছেন! (এন্ট্রি ${formatCoins(entry)})`);
+          showToast(`🏆 আপনি ${formatCoins(prize)} কয়েন প্রাইজ জিতেছেন! (এন্ট্রি ${formatCoins(entry)})`);
         } else {
-          showToast(`😢 আপনি হেরেছেন। এন্ট্রি ${formatCoins(entry)} টাকা কেটে নেওয়া হয়েছে।`);
+          showToast(`😢 আপনি হেরেছেন। এন্ট্রি ${formatCoins(entry)} কয়েন কেটে নেওয়া হয়েছে।`);
         }
         setTimeout(() => {
           document.getElementById('bet-badge').classList.remove('show');
@@ -4231,7 +4322,7 @@ text-overflow: clip;
       const t = document.getElementById('tb-title');
       if (t) {
         const modeLabel = mode === '1v1' ? '1 vs 1' : '4 PLAYER';
-        t.innerText = isBetMatch ? `${modeLabel} · 💰 বাজি` : `${modeLabel} MATCH`;
+        t.innerText = isBetMatch ? `${modeLabel} · 💰 কয়েন এন্ট্রি` : `${modeLabel} MATCH`;
       }
       document.getElementById('mode-screen').classList.add('hidden');
       document.getElementById('global-room-screen').classList.add('hidden');
@@ -4268,6 +4359,8 @@ text-overflow: clip;
     let frSearchResult = null;
 
     function loadUsersDB() {
+      // Local cache only (offline fallback + mock/bot users). Real users now
+      // live in Firebase under /users and /friends — see syncCurrentUserToDB.
       try {
         const raw = localStorage.getItem(USERS_DB_KEY);
         if (raw) usersDB = JSON.parse(raw) || {};
@@ -4278,6 +4371,47 @@ text-overflow: clip;
       try { localStorage.setItem(USERS_DB_KEY, JSON.stringify(usersDB)); } catch (e) {}
     }
 
+    let friendsListenerAttached = false;
+
+    // Listens in real time to this device's /friends/{uid} node in Firebase.
+    // Any accept/reject/request made from ANY device (this user's or a
+    // friend's) shows up here automatically — no refresh needed.
+    function attachFriendsListener() {
+      if (friendsListenerAttached || !fbReady || !profile || !profile.uid) return;
+      friendsListenerAttached = true;
+      fbDB.ref('friends/' + profile.uid).on('value', async (snap) => {
+        const data = snap.val() || {};
+        const friendsList = Object.keys(data.friendsList || {});
+        const incoming = Object.keys(data.requestsIncoming || {});
+        const sent = Object.keys(data.sentRequests || {});
+        const allUids = [...new Set([...friendsList, ...incoming, ...sent])];
+
+        await Promise.all(allUids.map(async (uid) => {
+          if (usersDB[uid]) return;
+          try {
+            const s = await fbDB.ref('users/' + uid).get();
+            usersDB[uid] = Object.assign(
+              { friends: [], friendRequests: [], sentRequests: [] },
+              s.exists() ? s.val() : { uid, name: 'Unknown', avatar: '👤' }
+            );
+          } catch (e) {}
+        }));
+
+        if (!usersDB[profile.uid]) usersDB[profile.uid] = {};
+        usersDB[profile.uid].friends = friendsList;
+        usersDB[profile.uid].friendRequests = incoming;
+        usersDB[profile.uid].sentRequests = sent;
+        profile.friends = friendsList.slice();
+        profile.friendRequests = incoming.slice();
+        profile.sentRequests = sent.slice();
+        saveProfile();
+        saveUsersDB();
+        updateFriendsBadge();
+        const fs = document.getElementById('friends-screen');
+        if (fs && !fs.classList.contains('hidden')) renderFriendsScreen();
+      });
+    }
+
     function syncCurrentUserToDB() {
       if (!profile || !profile.uid) return;
       if (!usersDB[profile.uid]) {
@@ -4286,9 +4420,9 @@ text-overflow: clip;
           name: profile.name,
           avatar: profile.avatar,
           coins: profile.coins,
-          friends: [],
-          friendRequests: [],
-          sentRequests: []
+          friends: profile.friends || [],
+          friendRequests: profile.friendRequests || [],
+          sentRequests: profile.sentRequests || []
         };
       } else {
         usersDB[profile.uid].name = profile.name;
@@ -4298,11 +4432,22 @@ text-overflow: clip;
         if (!Array.isArray(usersDB[profile.uid].friendRequests)) usersDB[profile.uid].friendRequests = [];
         if (!Array.isArray(usersDB[profile.uid].sentRequests)) usersDB[profile.uid].sentRequests = [];
       }
-      profile.friends = usersDB[profile.uid].friends.slice();
-      profile.friendRequests = usersDB[profile.uid].friendRequests.slice();
-      profile.sentRequests = usersDB[profile.uid].sentRequests.slice();
       saveProfile();
       saveUsersDB();
+
+      if (fbReady) {
+        try {
+          fbDB.ref('users/' + profile.uid).update({
+            uid: profile.uid,
+            name: profile.name,
+            avatar: profile.avatar,
+            coins: profile.coins,
+            lastSeen: Date.now()
+          });
+        } catch (e) {}
+        attachFriendsListener();
+        attachRefundsListener();
+      }
     }
 
     function seedMockUsers() {
@@ -4390,7 +4535,7 @@ text-overflow: clip;
       updateFriendsBadge();
     }
 
-    function doFriendSearch() {
+    async function doFriendSearch() {
       const input = document.getElementById('fr-search-input');
       if (!input) return;
       const q = (input.value || '').trim().toUpperCase().replace(/\s+/g, '');
@@ -4401,13 +4546,44 @@ text-overflow: clip;
 
       if (q === profile.uid) {
         frSearchResult = { found: true, self: true, user: usersDB[profile.uid] };
-      } else {
-        const found = usersDB[q];
-        if (!found) {
-          frSearchResult = { found: false, query: q };
+        renderFriendsScreen();
+        vibrate(15);
+        return;
+      }
+
+      // মক/বট ইউজার হলে লোকাল ক্যাশ থেকেই দেখাও
+      if (usersDB[q] && usersDB[q].isMock) {
+        frSearchResult = { found: true, user: usersDB[q] };
+        renderFriendsScreen();
+        vibrate(15);
+        return;
+      }
+
+      if (!fbReady) {
+        frSearchResult = { found: false, query: q };
+        showToast('⚠️ Firebase কনফিগ করা হয়নি — নিচের ধাপ অনুসরণ করুন');
+        renderFriendsScreen();
+        return;
+      }
+
+      frSearchResult = { loading: true, query: q };
+      renderFriendsScreen();
+
+      try {
+        const snap = await fbDB.ref('users/' + q).get();
+        if (snap.exists()) {
+          const u = snap.val();
+          usersDB[q] = Object.assign(
+            usersDB[q] || { friends: [], friendRequests: [], sentRequests: [] },
+            u
+          );
+          frSearchResult = { found: true, user: usersDB[q] };
         } else {
-          frSearchResult = { found: true, user: found };
+          frSearchResult = { found: false, query: q };
         }
+      } catch (e) {
+        frSearchResult = { found: false, query: q };
+        showToast('⚠️ নেটওয়ার্ক এরর, আবার চেষ্টা করুন');
       }
       renderFriendsScreen();
       vibrate(15);
@@ -4415,6 +4591,11 @@ text-overflow: clip;
 
     function buildSearchResultCard(res) {
       const card = document.createElement('div');
+      if (res.loading) {
+        card.className = 'fr-result-card';
+        card.innerHTML = `🔍 খোঁজা হচ্ছে... <b style="color:#ffde00;font-family:'Courier New',monospace;">${escapeHtml(res.query)}</b>`;
+        return card;
+      }
       if (!res.found) {
         card.className = 'fr-result-card not-found';
         card.innerHTML = `❌ ইউজার পাওয়া যায়নি<br><b style="color:#ffde00;font-family:'Courier New',monospace;letter-spacing:1px;">${escapeHtml(res.query)}</b><br><span style="font-size:10.5px;opacity:0.8;">আইডি সঠিকভাবে লিখুন বা বানান চেক করুন</span>`;
@@ -4610,36 +4791,46 @@ text-overflow: clip;
       return card;
     }
 
-    function sendFriendRequest(targetUid) {
+    async function sendFriendRequest(targetUid) {
       syncCurrentUserToDB();
       if (!targetUid || targetUid === profile.uid) return;
-      if (!usersDB[targetUid]) { showToast('❌ ইউজার পাওয়া যায়নি'); return; }
+
+      let other = usersDB[targetUid];
+      if (!other && fbReady) {
+        try {
+          const snap = await fbDB.ref('users/' + targetUid).get();
+          if (!snap.exists()) { showToast('❌ ইউজার পাওয়া যায়নি'); return; }
+          other = Object.assign({ friends: [], friendRequests: [], sentRequests: [] }, snap.val());
+          usersDB[targetUid] = other;
+        } catch (e) { showToast('⚠️ নেটওয়ার্ক এরর'); return; }
+      }
+      if (!other) { showToast('❌ ইউজার পাওয়া যায়নি'); return; }
 
       const me = usersDB[profile.uid];
-      const other = usersDB[targetUid];
-
-      if (me.friends.includes(targetUid)) { showToast('আপনি ইতিমধ্যে বন্ধু'); return; }
-      if (me.sentRequests.includes(targetUid)) { showToast('⏳ রিকোয়েস্ট আগেই পাঠানো হয়েছে'); return; }
-
-      if (me.friendRequests.includes(targetUid)) {
-        acceptFriendRequest(targetUid);
-        return;
-      }
-
-      me.sentRequests.push(targetUid);
-      if (!other.friendRequests.includes(profile.uid)) {
-        other.friendRequests.push(profile.uid);
-      }
-      saveUsersDB();
-      syncCurrentUserToDB();
-      vibrate([30, 15, 30]);
-      showToast(`✅ ${other.name}-কে ফ্রেন্ড রিকোয়েস্ট পাঠানো হয়েছে`);
+      if ((me.friends || []).includes(targetUid)) { showToast('আপনি ইতিমধ্যে বন্ধু'); return; }
+      if ((me.sentRequests || []).includes(targetUid)) { showToast('⏳ রিকোয়েস্ট আগেই পাঠানো হয়েছে'); return; }
+      if ((me.friendRequests || []).includes(targetUid)) { acceptFriendRequest(targetUid); return; }
 
       if (other.isMock) {
-        setTimeout(() => {
-          simulateMockAccept(profile.uid, targetUid);
-        }, 5000 + Math.random() * 4000);
+        // বট/মক ইউজার — শুধু লোকাল সিমুলেশন, Firebase ছোঁয়া হয় না
+        me.sentRequests.push(targetUid);
+        if (!other.friendRequests.includes(profile.uid)) other.friendRequests.push(profile.uid);
+        saveUsersDB();
+        profile.sentRequests = me.sentRequests.slice();
+        saveProfile();
+        setTimeout(() => simulateMockAccept(profile.uid, targetUid), 5000 + Math.random() * 4000);
+      } else {
+        if (!fbReady) { showToast('⚠️ Firebase কনফিগ করা হয়নি'); return; }
+        try {
+          const updates = {};
+          updates['friends/' + profile.uid + '/sentRequests/' + targetUid] = true;
+          updates['friends/' + targetUid + '/requestsIncoming/' + profile.uid] = true;
+          await fbDB.ref().update(updates);
+        } catch (e) { showToast('⚠️ রিকোয়েস্ট পাঠানো যায়নি, আবার চেষ্টা করুন'); return; }
       }
+
+      vibrate([30, 15, 30]);
+      showToast(`✅ ${other.name}-কে ফ্রেন্ড রিকোয়েস্ট পাঠানো হয়েছে`);
 
       if (frSearchResult && frSearchResult.found && frSearchResult.user && frSearchResult.user.uid === targetUid) {
         frSearchResult.user = usersDB[targetUid];
@@ -4647,33 +4838,58 @@ text-overflow: clip;
       renderFriendsScreen();
     }
 
-    function acceptFriendRequest(fromUid) {
+    async function acceptFriendRequest(fromUid) {
       syncCurrentUserToDB();
-      if (!usersDB[fromUid] || !usersDB[profile.uid]) return;
-      const me = usersDB[profile.uid];
       const other = usersDB[fromUid];
 
-      me.friendRequests = me.friendRequests.filter(id => id !== fromUid);
-      other.sentRequests = other.sentRequests.filter(id => id !== profile.uid);
-      if (!me.friends.includes(fromUid)) me.friends.push(fromUid);
-      if (!other.friends.includes(profile.uid)) other.friends.push(profile.uid);
+      if (other && other.isMock) {
+        const me = usersDB[profile.uid];
+        me.friendRequests = (me.friendRequests || []).filter(id => id !== fromUid);
+        other.sentRequests = (other.sentRequests || []).filter(id => id !== profile.uid);
+        if (!me.friends.includes(fromUid)) me.friends.push(fromUid);
+        if (!other.friends.includes(profile.uid)) other.friends.push(profile.uid);
+        saveUsersDB();
+        profile.friends = me.friends.slice();
+        profile.friendRequests = me.friendRequests.slice();
+        saveProfile();
+      } else {
+        if (!fbReady) { showToast('⚠️ Firebase কনফিগ করা হয়নি'); return; }
+        try {
+          const updates = {};
+          updates['friends/' + profile.uid + '/requestsIncoming/' + fromUid] = null;
+          updates['friends/' + fromUid + '/sentRequests/' + profile.uid] = null;
+          updates['friends/' + profile.uid + '/friendsList/' + fromUid] = true;
+          updates['friends/' + fromUid + '/friendsList/' + profile.uid] = true;
+          await fbDB.ref().update(updates);
+        } catch (e) { showToast('⚠️ এরর হয়েছে, আবার চেষ্টা করুন'); return; }
+      }
 
-      saveUsersDB();
-      syncCurrentUserToDB();
       vibrate([40, 25, 40]);
-      showToast(`🎉 ${other.name} এখন আপনার বন্ধু!`);
+      showToast(`🎉 ${(other && other.name) || fromUid} এখন আপনার বন্ধু!`);
       renderFriendsScreen();
     }
 
-    function rejectFriendRequest(fromUid) {
+    async function rejectFriendRequest(fromUid) {
       syncCurrentUserToDB();
-      if (!usersDB[fromUid] || !usersDB[profile.uid]) return;
-      const me = usersDB[profile.uid];
       const other = usersDB[fromUid];
-      me.friendRequests = me.friendRequests.filter(id => id !== fromUid);
-      other.sentRequests = other.sentRequests.filter(id => id !== profile.uid);
-      saveUsersDB();
-      syncCurrentUserToDB();
+
+      if (other && other.isMock) {
+        const me = usersDB[profile.uid];
+        me.friendRequests = (me.friendRequests || []).filter(id => id !== fromUid);
+        other.sentRequests = (other.sentRequests || []).filter(id => id !== profile.uid);
+        saveUsersDB();
+        profile.friendRequests = me.friendRequests.slice();
+        saveProfile();
+      } else {
+        if (!fbReady) { showToast('⚠️ Firebase কনফিগ করা হয়নি'); return; }
+        try {
+          const updates = {};
+          updates['friends/' + profile.uid + '/requestsIncoming/' + fromUid] = null;
+          updates['friends/' + fromUid + '/sentRequests/' + profile.uid] = null;
+          await fbDB.ref().update(updates);
+        } catch (e) { showToast('⚠️ এরর হয়েছে, আবার চেষ্টা করুন'); return; }
+      }
+
       vibrate(15);
       showToast('❌ রিকোয়েস্ট বাতিল করা হয়েছে');
       renderFriendsScreen();
@@ -4879,6 +5095,35 @@ text-overflow: clip;
       });
     }
 
+    let chatListenerRef = null;
+    let chatListenerPairId = null;
+
+    // ফায়ারবেসে দুই ইউজারের নির্দিষ্ট চ্যাট থ্রেড রিয়েল-টাইমে লিসেন করে —
+    // অন্য ডিভাইস থেকে মেসেজ এলে সাথে সাথে UI-তে চলে আসবে।
+    function attachChatListener(otherUid) {
+      if (!fbReady) return;
+      const other = usersDB[otherUid];
+      if (other && other.isMock) return; // মক ইউজারের সাথে লোকাল সিমুলেশনই থাক
+      const pairId = getConversationId(profile.uid, otherUid);
+      if (chatListenerPairId === pairId && chatListenerRef) return;
+      if (chatListenerRef) chatListenerRef.off();
+      const conv = getOrCreateConversation(profile.uid, otherUid);
+      chatListenerRef = fbDB.ref('chats/' + pairId + '/messages');
+      chatListenerPairId = pairId;
+      chatListenerRef.on('value', (snap) => {
+        const data = snap.val() || {};
+        const msgs = Object.values(data).sort((a, b) => a.timestamp - b.timestamp);
+        conv.messages = msgs;
+        conv.last_updated = msgs.length ? msgs[msgs.length - 1].timestamp : conv.last_updated;
+        saveConversationsDB();
+        if (currentChatUserId === otherUid) {
+          markConversationRead(profile.uid, otherUid);
+          renderChatMessages();
+        }
+        updateInboxBadge();
+      });
+    }
+
     function openChatWith(uid, name, avatar) {
       if (!uid || uid === profile.uid) {
         if (uid === profile.uid) showToast('নিজের সাথে চ্যাট করা যায় না');
@@ -4889,6 +5134,7 @@ text-overflow: clip;
       ensureOtherUserExists(uid, name, avatar);
       getOrCreateConversation(profile.uid, uid);
       currentChatUserId = uid;
+      attachChatListener(uid);
 
       document.getElementById('mode-screen').classList.add('hidden');
       document.getElementById('friends-screen').classList.add('hidden');
@@ -4986,7 +5232,6 @@ text-overflow: clip;
       if (!text) return;
       if (text.length > 500) { showToast('⚠️ মেসেজ অনেক বড়'); return; }
 
-      const conv = getOrCreateConversation(profile.uid, currentChatUserId);
       const msgObj = {
         id: 'msg_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
         sender_id: profile.uid,
@@ -4994,19 +5239,28 @@ text-overflow: clip;
         timestamp: Date.now(),
         read: false
       };
-      conv.messages.push(msgObj);
-      conv.last_updated = Date.now();
-      saveConversationsDB();
-
       inp.value = '';
       vibrate(15);
-      renderChatMessages();
-      updateInboxBadge();
 
       const other = usersDB[currentChatUserId];
       if (other && other.isMock) {
+        // মক ইউজার — লোকাল সিমুলেশন (আগের মতোই)
+        const conv = getOrCreateConversation(profile.uid, currentChatUserId);
+        conv.messages.push(msgObj);
+        conv.last_updated = Date.now();
+        saveConversationsDB();
+        renderChatMessages();
+        updateInboxBadge();
         simulateMockReply(profile.uid, currentChatUserId);
+        return;
       }
+
+      if (!fbReady) { showToast('⚠️ Firebase কনফিগ করা হয়নি'); return; }
+      const pairId = getConversationId(profile.uid, currentChatUserId);
+      fbDB.ref('chats/' + pairId + '/messages/' + msgObj.id).set(msgObj)
+        .catch(() => showToast('⚠️ মেসেজ পাঠানো যায়নি'));
+      // মেসেজ UI-তে renderChatMessages() নিজে থেকেই আসবে attachChatListener-এর
+      // realtime 'value' লিসেনারের মাধ্যমে — এখানে আলাদা করে লিখতে হবে না।
     }
 
     function simulateMockReply(myUid, mockUid) {
