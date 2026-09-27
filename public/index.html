@@ -4573,6 +4573,15 @@ async function doFriendSearch() {
   if (!q.startsWith('R-') && !q.startsWith('LK-')) {
     if (/^[A-Z0-9]{6}$/.test(q)) q = 'R-' + q;      // ৬ অক্ষর = রুম কোড
     else if (q.length === 8) q = 'LK-' + q;          // ৮ অক্ষর = ইউজার আইডি
+  
+  // 🔥 "LK-XXXXXX" (৯ অক্ষর) = প্রাইভেট রুম কোড চেক
+  if (q.startsWith('LK-') && q.length === 9 && fbReady) {
+    try {
+      const roomSnap = await fbDB.ref('rooms/R-' + q.slice(3)).get();
+      if (roomSnap.exists()) {
+        q = 'R-' + q.slice(3);
+      }
+    } catch (e) {}
   }
 
   // Room code search
