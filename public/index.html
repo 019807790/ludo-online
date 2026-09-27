@@ -3057,6 +3057,28 @@ text-overflow: clip;
         started: false,
         timers: []
       };
+      // 🔥 Firebase-এ রুম সেভ করুন
+      if (fbReady) {
+  const fbRoomId = 'R-' + currentRoom.code;
+  currentRoom.fbRoomId = fbRoomId;
+  const fbRoomData = {
+    room_id: fbRoomId,
+    creator_id: profile.uid,
+    creator_name: profile.name,
+    creator_photo: profile.avatar,
+    mode: currentRoom.mode,
+    coin_amount: currentRoom.amount,
+    maxPlayers: currentRoom.players,
+    players: [{ id: profile.uid, name: profile.name, photo: profile.avatar, isCreator: true }],
+    status: 'waiting',
+    createdAt: Date.now(),
+    expiresAt: Date.now() + ROOM_EXPIRE_MS,
+    isPrivate: true
+  };
+  fbDB.ref('rooms/' + fbRoomId).set(fbRoomData)
+    .then(() => console.log('✅ Private room saved:', fbRoomId))
+    .catch(e => console.error('❌ Save failed:', e));
+    }
       document.getElementById('bet-overlay').classList.remove('show');
       pendingGameMode = null;
       pendingBetAmount = 0;
