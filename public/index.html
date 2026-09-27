@@ -180,6 +180,7 @@
         0 0 36px rgba(201, 162, 39, 0.15),
         inset 0 1px 0 rgba(255, 215, 0, 0.12),
         0 6px 16px rgba(0,0,0,0.65);
+      transform: translateY(30px);
     }
     .mnb-item {
       flex: 1;
@@ -230,8 +231,8 @@
       color: #1a1100;
       text-shadow: 0 1px 1px rgba(255, 255, 255, 0.35);
       white-space: nowrap;
-overflow: visible;
-text-overflow: clip;
+      overflow: visible;
+      text-overflow: clip;
     }
     .mnb-item-primary .mnb-icon {
       filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
@@ -1822,27 +1823,19 @@ text-overflow: clip;
       0% { opacity: 0; transform: translateX(-50%) translateY(8px) scale(0.7); }
       100% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
     }
-
- .mode-nav-bar {
-    transform: translateY(30px);
-}
   </style>
-  <!-- ================= FIREBASE (REAL ONLINE BACKEND) =================
-       নিচের firebaseConfig অবশ্যই আপনার নিজের Firebase প্রজেক্টের কনফিগ দিয়ে
-       পরিবর্তন করতে হবে। কীভাবে বানাবেন তার ধাপ ধাপ গাইড নিচে চ্যাটে দেওয়া আছে।
-  -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <script>
     const firebaseConfig = {
-  apiKey: "AIzaSyCm9ejFGyKZo1BVHeq3aBO6U02YUdR_2QM",
-  authDomain: "ludu-369.firebaseapp.com",
-  databaseURL: "https://ludu-369-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "ludu-369",
-  storageBucket: "ludu-369.firebasestorage.app",
-  messagingSenderId: "394106006538",
-  appId: "1:394106006538:web:b8ba264ae339f5320543f3"
-   };
+      apiKey: "AIzaSyCm9ejFGyKZo1BVHeq3aBO6U02YUdR_2QM",
+      authDomain: "ludu-369.firebaseapp.com",
+      databaseURL: "https://ludu-369-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "ludu-369",
+      storageBucket: "ludu-369.firebasestorage.app",
+      messagingSenderId: "394106006538",
+      appId: "1:394106006538:web:b8ba264ae339f5320543f3"
+    };
     let fbDB = null;
     let fbReady = false;
     window.__fbInitError = null;
@@ -1852,7 +1845,7 @@ text-overflow: clip;
       fbReady = true;
     } catch (e) {
       window.__fbInitError = (e && (e.code || e.message)) ? (e.code || e.message) : String(e);
-      console.error('Firebase init failed — এখনও firebaseConfig বসানো হয়নি।', e);
+      console.error('Firebase init failed', e);
     }
   </script>
 </head>
@@ -1898,11 +1891,7 @@ text-overflow: clip;
 
   <!-- ==================== MODE SCREEN ==================== -->
   <div class="mode-screen hidden" id="mode-screen">
-
-    <!-- TOP AREA: profile + nav bar -->
     <div class="mode-top-area">
-
-      <!-- Profile pill (green glow) -->
       <div class="mode-profile-pill" id="mode-profile-pill" onclick="openProfile()">
         <div class="mpp-avatar" id="mpp-avatar">👨‍💼</div>
         <div class="mpp-info">
@@ -1910,8 +1899,6 @@ text-overflow: clip;
           <div class="mpp-coins" id="mpp-coins">🪙 0</div>
         </div>
       </div>
-
-      <!-- Nav bar (gold border) with all options -->
       <div class="mode-nav-bar">
         <button class="mnb-item" onclick="openClassicMode()">
           <span class="mnb-icon">🎮</span>
@@ -1932,7 +1919,6 @@ text-overflow: clip;
           <span class="mnb-label">লাইভ রুম</span>
         </button>
       </div>
-
     </div>
 
     <div class="mode-header">
@@ -2129,7 +2115,6 @@ text-overflow: clip;
   <div class="mini-overlay" id="create-room-overlay">
     <div class="mini-card">
       <div class="mini-title">🏗️ নতুন রুম তৈরি করুন</div>
-
       <div class="cr-label">প্লেয়ার সংখ্যা</div>
       <div class="cr-mode-row">
         <button class="cr-mode-btn selected" data-mode="1v1" onclick="selectCreateMode('1v1')">
@@ -2143,7 +2128,6 @@ text-overflow: clip;
           <span class="crm-sub">৪ জন খেলোয়াড়</span>
         </button>
       </div>
-
       <div class="cr-label">কয়েন এন্ট্রি</div>
       <div class="cr-coin-row">
         <button class="cr-coin-btn" data-coin="50" onclick="selectCreateCoin(50)">50</button>
@@ -2154,12 +2138,10 @@ text-overflow: clip;
       <input type="number" class="bet-custom-input" id="cr-coin-input"
              placeholder="কাস্টম পরিমাণ (মিনিট ১০)" min="10" step="1"
              oninput="onCreateCoinInput(event)" style="margin-top:10px;">
-
       <div class="cr-balance-strip">
         <span>🪙 আপনার ব্যালেন্স:</span>
         <b id="cr-balance-val">0</b>
       </div>
-
       <div class="mini-actions">
         <button class="mini-btn ghost" onclick="closeCreateRoom()">বাতিল</button>
         <button class="mini-btn" onclick="confirmCreateRoom()">✅ তৈরি করুন</button>
@@ -2205,13 +2187,11 @@ text-overflow: clip;
   <div class="mini-overlay" id="bet-overlay">
     <div class="mini-card">
       <div class="mini-title">💰 এন্ট্রি ফি নির্বাচন করুন</div>
-
       <div class="bet-balance-strip">
         <span class="bb-icon">🪙</span>
         <span class="bb-label">আপনার ব্যালেন্স:</span>
         <span class="bb-value" id="bet-balance-val">0</span>
       </div>
-
       <div class="bet-options" id="bet-options">
         <button class="bet-btn" data-amount="10" onclick="selectBetAmount(10, event)">
           <span class="bet-btn-icon">🪙</span>১০
@@ -2226,13 +2206,11 @@ text-overflow: clip;
           <span class="bet-btn-icon">🪙</span>৫০০
         </button>
       </div>
-
       <div class="bet-custom-row">
         <span class="bcr-label">কাস্টম:</span>
         <input type="number" class="bet-custom-input" id="bet-custom-input"
                placeholder="পরিমাণ লিখুন" min="5" step="1" oninput="onCustomBetInput(event)">
       </div>
-
       <div class="bet-calc" id="bet-calc">
         <div class="bet-calc-line">
           <span>এন্ট্রি ফি:</span>
@@ -2258,9 +2236,7 @@ text-overflow: clip;
           আপনার এন্ট্রি ফি নির্বাচন করুন
         </div>
       </div>
-
       <div class="bet-calc-warn hidden" id="bet-warn"></div>
-
       <div class="mini-actions">
         <button class="mini-btn ghost" onclick="closeBetAmount()">বাতিল</button>
         <button class="mini-btn" onclick="startBetMatch()" id="bet-start-btn">রুম তৈরি করুন</button>
@@ -2271,14 +2247,12 @@ text-overflow: clip;
   <div class="mini-overlay" id="room-overlay">
     <div class="mini-card">
       <div class="mini-title">🔗 রুম তৈরি হয়েছে</div>
-
       <div class="room-code-display">
         <div class="room-code-label">রুম কোড</div>
         <div class="room-code-value" id="room-code-value">LK-XXXXXX</div>
         <div class="room-code-hint">বন্ধুকে এই কোডটি পাঠান</div>
         <button class="room-code-copy-btn" onclick="copyRoomCode()" title="কপি করুন">📋</button>
       </div>
-
       <div class="room-share-row">
         <button class="share-btn whatsapp" onclick="shareRoom('whatsapp')">
           <span class="sb-ico">📱</span>
@@ -2293,13 +2267,10 @@ text-overflow: clip;
           লিংক কপি
         </button>
       </div>
-
       <div class="room-players" id="room-players"></div>
-
       <div class="room-status" id="room-status">
         <span><span class="rs-dot"></span>বন্ধুর জন্য অপেক্ষা করা হচ্ছে...</span>
       </div>
-
       <div class="mini-actions">
         <button class="mini-btn ghost" onclick="cancelRoom()">বাতিল</button>
         <button class="mini-btn" id="room-ready-btn" onclick="playerReady()" disabled>
@@ -2315,7 +2286,6 @@ text-overflow: clip;
         <div class="settings-title">⚙️ সেটিংস</div>
         <div class="pp-close" onclick="closeSettings()">✕</div>
       </div>
-
       <div class="settings-group">
         <div class="settings-group-title">সাউন্ড ও কম্পন</div>
         <div class="setting-row" onclick="toggleSoundFromSettings(event)">
@@ -2329,7 +2299,6 @@ text-overflow: clip;
           <div class="toggle-switch" id="ts-vibration"><div class="toggle-knob"></div></div>
         </div>
       </div>
-
       <div class="settings-group">
         <div class="settings-group-title">গেমপ্লে</div>
         <div class="setting-row" onclick="event.stopPropagation()">
@@ -2347,7 +2316,6 @@ text-overflow: clip;
           <div class="toggle-switch" id="ts-highlight"><div class="toggle-knob"></div></div>
         </div>
       </div>
-
       <div class="settings-group">
         <div class="settings-group-title">সাহায্য ও তথ্য</div>
         <div class="setting-row" onclick="openHowToPlay()">
@@ -2361,7 +2329,6 @@ text-overflow: clip;
           <span class="sr-arrow">›</span>
         </div>
       </div>
-
       <button class="settings-exit-btn" onclick="confirmExitGame()">
         🚪 গেম থেকে বেরিয়ে যান
       </button>
@@ -2491,7 +2458,6 @@ text-overflow: clip;
     </div>
   </div>
 
-  <!-- ==================== VS ANIMATION SCREEN ==================== -->
   <div class="vs-screen" id="vs-screen">
     <div class="vs-bg-rays"></div>
     <div class="vs-flash"></div>
@@ -2768,12 +2734,8 @@ text-overflow: clip;
     function closeHowToPlay() { document.getElementById('howto-overlay').classList.remove('show'); }
     function howtoOverlayClick(e) { if (e.target.id === 'howto-overlay') closeHowToPlay(); }
 
-    /* ============================================================
-       ============ "ক্লাসিক" NAV BUTTON FUNCTION  ================
-       ============================================================ */
     function openClassicMode() {
       getAudioCtx();
-      // Pulse mode cards and let user choose from them
       const cards = document.querySelectorAll('.mode-card');
       cards.forEach(c => {
         c.classList.remove('highlight-pulse');
@@ -3057,28 +3019,27 @@ text-overflow: clip;
         started: false,
         timers: []
       };
-      // 🔥 Firebase-এ রুম সেভ করুন
       if (fbReady) {
-  const fbRoomId = 'R-' + currentRoom.code;
-  currentRoom.fbRoomId = fbRoomId;
-  const fbRoomData = {
-    room_id: fbRoomId,
-    creator_id: profile.uid,
-    creator_name: profile.name,
-    creator_photo: profile.avatar,
-    mode: currentRoom.mode,
-    coin_amount: currentRoom.amount,
-    maxPlayers: currentRoom.players,
-    players: [{ id: profile.uid, name: profile.name, photo: profile.avatar, isCreator: true }],
-    status: 'waiting',
-    createdAt: Date.now(),
-    expiresAt: Date.now() + ROOM_EXPIRE_MS,
-    isPrivate: true
-  };
-  fbDB.ref('rooms/' + fbRoomId).set(fbRoomData)
-    .then(() => console.log('✅ Private room saved:', fbRoomId))
-    .catch(e => console.error('❌ Save failed:', e));
-    }
+        const fbRoomId = 'R-' + currentRoom.code;
+        currentRoom.fbRoomId = fbRoomId;
+        const fbRoomData = {
+          room_id: fbRoomId,
+          creator_id: profile.uid,
+          creator_name: profile.name,
+          creator_photo: profile.avatar,
+          mode: currentRoom.mode,
+          coin_amount: currentRoom.amount,
+          maxPlayers: currentRoom.players,
+          players: [{ id: profile.uid, name: profile.name, photo: profile.avatar, isCreator: true }],
+          status: 'waiting',
+          createdAt: Date.now(),
+          expiresAt: Date.now() + ROOM_EXPIRE_MS,
+          isPrivate: true
+        };
+        fbDB.ref('rooms/' + fbRoomId).set(fbRoomData)
+          .then(() => console.log('✅ Private room saved:', fbRoomId))
+          .catch(e => console.error('❌ Save failed:', e));
+      }
       document.getElementById('bet-overlay').classList.remove('show');
       pendingGameMode = null;
       pendingBetAmount = 0;
@@ -3248,6 +3209,9 @@ text-overflow: clip;
         LudoAuth.setBalance(profile.coins);
         showToast(`💰 রুম বাতিল — ${formatCoins(refundAmt)} কয়েন সম্পূর্ণ ফেরত পেয়েছেন`);
       }
+      if (fbReady && currentRoom.fbRoomId) {
+        fbDB.ref('rooms/' + currentRoom.fbRoomId).remove().catch(() => {});
+      }
       if (currentRoom.timers) currentRoom.timers.forEach(t => clearTimeout(t));
       currentRoom = null;
       document.getElementById('room-overlay').classList.remove('show');
@@ -3279,12 +3243,12 @@ text-overflow: clip;
       const fullMsg = msg + '\n\n' + link;
       if (platform === 'whatsapp') {
         try { window.open('https://wa.me/?text=' + encodeURIComponent(fullMsg), '_blank'); }
-        catch (e) { fallbackCopy(fullMsg, () => showToast('মেসেজ কপি হয়েছে — WhatsApp-এ পেস্ট করুন')); }
+        catch (e) { fallbackCopy(fullMsg, () => showToast('মেসেজ কপি হয়েছে')); }
       } else if (platform === 'messenger') {
         if (navigator.share) {
           navigator.share({ title: 'Ludo King কয়েন ম্যাচ', text: msg, url: link })
-            .catch(() => fallbackCopy(fullMsg, () => showToast('মেসেজ কপি হয়েছে — Messenger-এ পেস্ট করুন')));
-        } else fallbackCopy(fullMsg, () => showToast('মেসেজ কপি হয়েছে — Messenger-এ পেস্ট করুন'));
+            .catch(() => fallbackCopy(fullMsg, () => showToast('মেসেজ কপি হয়েছে')));
+        } else fallbackCopy(fullMsg, () => showToast('মেসেজ কপি হয়েছে'));
       } else fallbackCopy(fullMsg, () => showToast('রুম লিংক কপি হয়েছে!'));
     }
 
@@ -3296,8 +3260,6 @@ text-overflow: clip;
     let startedMatchRoomIds = new Set();
     let refundsListenerAttached = false;
 
-    // /rooms নোডে রিয়েল-টাইম লিসেন করে — যে কেউ রুম বানালে/জয়েন করলে/বাতিল
-    // করলে সবার ফোনে সাথে সাথে লবি আপডেট হবে।
     function attachRoomsListener() {
       if (roomsListenerAttached || !fbReady) return;
       roomsListenerAttached = true;
@@ -3308,7 +3270,6 @@ text-overflow: clip;
         globalRooms = all.filter(r => r.status === 'waiting' && r.expiresAt > now);
         renderGlobalRooms();
 
-        // আমি যে রুমে আছি সেটা এইমাত্র পূর্ণ হয়ে গেলে — আমার ডিভাইসেও ম্যাচ শুরু করাও
         all.forEach(r => {
           if (r.status === 'full' && r.players.some(p => p.id === profile.uid) && !startedMatchRoomIds.has(r.room_id)) {
             startedMatchRoomIds.add(r.room_id);
@@ -3323,8 +3284,6 @@ text-overflow: clip;
       fbDB.ref('rooms').off();
     }
 
-    // আমার প্রাপ্য কয়েন-রিফান্ড (রুম বাতিল হলে) — যে ডিভাইস থেকেই বাতিল হোক
-    // না কেন, আমার নিজের ডিভাইসে এসে কয়েন যোগ হবে।
     function attachRefundsListener() {
       if (refundsListenerAttached || !fbReady || !profile || !profile.uid) return;
       refundsListenerAttached = true;
@@ -3481,8 +3440,6 @@ text-overflow: clip;
       LudoAuth.setBalance(profile.coins);
       vibrate(30);
       showToast(`✅ জয়েন সম্পন্ন! ${formatCoins(room.coin_amount)} কয়েন কাটা হয়েছে।`);
-      // রুম পূর্ণ হলে ম্যাচ শুরু হবে attachRoomsListener-এর মাধ্যমে (সব প্লেয়ারের
-      // ডিভাইসেই একইসাথে ট্রিগার হবে) — এখানে আলাদা করে কিছু লেখার দরকার নেই।
     }
 
     function startCountdownAndStart(room) {
@@ -3552,20 +3509,6 @@ text-overflow: clip;
         updates['rooms/' + roomId] = null;
         await fbDB.ref().update(updates);
       } catch (e) { showToast('⚠️ এরর হয়েছে, আবার চেষ্টা করুন'); return; }
-      // কয়েন ফেরত attachRefundsListener এর মাধ্যমে সবার ডিভাইসেই এসে যাবে
-    }
-
-    function refundRoom(room, reason) {
-      // fallback (fbReady না থাকলে) — শুধু নিজের ডিভাইসের কয়েন সরাসরি ফেরত
-      if (!fbReady) {
-        (room.players || []).forEach(player => {
-          if (player.id === profile.uid) {
-            profile.coins += room.coin_amount;
-            LudoAuth.setBalance(profile.coins);
-            showToast(`💰 ${formatCoins(room.coin_amount)} কয়েন সম্পূর্ণ ফেরত পেয়েছেন (${reason})`);
-          }
-        });
-      }
     }
 
     function startRoomTick() {
@@ -3625,7 +3568,7 @@ text-overflow: clip;
       if (!amt || amt < 10) { showToast('সর্বনিম্ন ১০ কয়েন এন্ট্রি দিন'); return; }
       if (amt > profile.coins) { showToast('⚠️ পর্যাপ্ত কয়েন নেই!'); return; }
       if (isUserInAnyRoom()) { showToast('আপনি ইতিমধ্যে একটি রুমে আছেন'); return; }
-      if (!fbReady) { showToast('⚠️ Firebase কনফিগ করা হয়নি — রুম বানানো যাবে না'); return; }
+      if (!fbReady) { showToast('⚠️ Firebase কনফিগ করা হয়নি'); return; }
 
       const maxPlayers = crMode === '1v1' ? 2 : 4;
       const room = {
@@ -3649,8 +3592,7 @@ text-overflow: clip;
       profile.coins -= amt;
       LudoAuth.setBalance(profile.coins);
       closeCreateRoom();
-      showToast(`✅ রুম তৈরি! ${formatCoins(amt)} কয়েন কাটা হয়েছে। এখন বন্ধুরা এটা লবিতে দেখতে পাবে।`);
-      // globalRooms লিস্ট attachRoomsListener এর মাধ্যমে অটো-আপডেট হবে
+      showToast(`✅ রুম তৈরি! ${formatCoins(amt)} কয়েন কাটা হয়েছে।`);
     }
 
     /* ================= PROFILE ACTION POPUP ================= */
@@ -3765,25 +3707,6 @@ text-overflow: clip;
       currentBetInfo = null;
       document.getElementById('bet-badge').classList.remove('show');
     }
-
-    function handleOpponentQuit(quitterColor) {
-      if (!currentBetInfo || !gameActive) return;
-      const myEntry = currentBetInfo.amount;
-      profile.coins += myEntry;
-      LudoAuth.setBalance(profile.coins);
-      showToast(`🏆 প্রতিপক্ষ (${quitterColor}) গেম ছেড়েছে! আপনার ${formatCoins(myEntry)} কয়েন সম্পূর্ণ ফেরত পেয়েছেন।`);
-      gameActive = false;
-      currentBetInfo = null;
-      document.getElementById('bet-badge').classList.remove('show');
-    }
-
-    window.serverOpponentQuit = function(quitterColor) {
-      handleOpponentQuit(quitterColor);
-      document.getElementById('game-wrapper').classList.remove('visible');
-      setTimeout(() => {
-        document.getElementById('mode-screen').classList.remove('hidden');
-      }, 1500);
-    };
 
     function doExitGame() {
       closeExitConfirm();
@@ -4383,8 +4306,6 @@ text-overflow: clip;
     let frSearchResult = null;
 
     function loadUsersDB() {
-      // Local cache only (offline fallback + mock/bot users). Real users now
-      // live in Firebase under /users and /friends — see syncCurrentUserToDB.
       try {
         const raw = localStorage.getItem(USERS_DB_KEY);
         if (raw) usersDB = JSON.parse(raw) || {};
@@ -4397,9 +4318,6 @@ text-overflow: clip;
 
     let friendsListenerAttached = false;
 
-    // Listens in real time to this device's /friends/{uid} node in Firebase.
-    // Any accept/reject/request made from ANY device (this user's or a
-    // friend's) shows up here automatically — no refresh needed.
     function attachFriendsListener() {
       if (friendsListenerAttached || !fbReady || !profile || !profile.uid) return;
       friendsListenerAttached = true;
@@ -4467,7 +4385,7 @@ text-overflow: clip;
           coins: profile.coins,
           lastSeen: Date.now()
         }).catch((e) => {
-          showToast('⚠️ প্রোফাইল Firebase-এ সেভ হয়নি! এরর: ' + ((e && (e.code || e.message)) || e));
+          console.warn('Profile save failed:', e);
         });
         attachFriendsListener();
         attachRefundsListener();
@@ -4559,90 +4477,91 @@ text-overflow: clip;
       updateFriendsBadge();
     }
 
-async function doFriendSearch() {
-  const input = document.getElementById('fr-search-input');
-  if (!input) return;
-  let q = (input.value || '').trim().toUpperCase().replace(/\s+/g, '');
+    async function doFriendSearch() {
+      const input = document.getElementById('fr-search-input');
+      if (!input) return;
+      let q = (input.value || '').trim().toUpperCase().replace(/\s+/g, '');
 
-  if (!q) { showToast('⚠️ ইউজার আইডি অথবা রুম কোড লিখুন'); return; }
-  if (q.length < 3) { showToast('⚠️ কমপক্ষে ৩ অক্ষরের কোড লিখুন'); return; }
+      if (!q) { showToast('⚠️ ইউজার আইডি অথবা রুম কোড লিখুন'); return; }
+      if (q.length < 3) { showToast('⚠️ কমপক্ষে ৩ অক্ষরের কোড লিখুন'); return; }
 
-  syncCurrentUserToDB();
+      syncCurrentUserToDB();
 
-  // Auto-fix common prefixes
-  if (!q.startsWith('R-') && !q.startsWith('LK-')) {
-    if (/^[A-Z0-9]{6}$/.test(q)) q = 'R-' + q;      // ৬ অক্ষর = রুম কোড
-    else if (q.length === 8) q = 'LK-' + q;          // ৮ অক্ষর = ইউজার আইডি
-  
-  // 🔥 "LK-XXXXXX" (৯ অক্ষর) = প্রাইভেট রুম কোড চেক
-  if (q.startsWith('LK-') && q.length === 9 && fbReady) {
-    try {
-      const roomSnap = await fbDB.ref('rooms/R-' + q.slice(3)).get();
-      if (roomSnap.exists()) {
-        q = 'R-' + q.slice(3);
+      // Auto-fix common prefixes
+      if (!q.startsWith('R-') && !q.startsWith('LK-')) {
+        if (/^[A-Z0-9]{6}$/.test(q)) q = 'R-' + q;
+        else if (q.length === 8) q = 'LK-' + q;
       }
-    } catch (e) {}
-  }
 
-  // Room code search
-  if (q.startsWith('R-')) {
-    if (!fbReady) { showToast('⚠️ Firebase কনফিগ করা হয়নি'); return; }
-    frSearchResult = { loading: true, query: q };
-    renderFriendsScreen();
-    try {
-      const snap = await fbDB.ref('rooms/' + q).get();
-      if (snap.exists() && snap.val().status === 'waiting') {
-        frSearchResult = { found: true, isRoom: true, room: snap.val() };
-      } else {
-        frSearchResult = { found: false, query: q, isRoom: true };
+      // LK-XXXXXX (9 chars) = private room code check
+      if (q.startsWith('LK-') && q.length === 9 && fbReady) {
+        try {
+          const roomSnap = await fbDB.ref('rooms/R-' + q.slice(3)).get();
+          if (roomSnap.exists()) {
+            q = 'R-' + q.slice(3);
+          }
+        } catch (e) {}
       }
-    } catch (e) {
-      frSearchResult = { found: false, query: q, isRoom: true };
-    }
-    renderFriendsScreen();
-    vibrate(15);
-    return;
-  }
 
-  // Self
-  if (q === profile.uid) {
-    frSearchResult = { found: true, self: true, user: usersDB[profile.uid] };
-    renderFriendsScreen();
-    return;
-  }
+      // Room code search
+      if (q.startsWith('R-')) {
+        if (!fbReady) { showToast('⚠️ Firebase কনফিগ করা হয়নি'); return; }
+        frSearchResult = { loading: true, query: q };
+        renderFriendsScreen();
+        try {
+          const snap = await fbDB.ref('rooms/' + q).get();
+          if (snap.exists() && snap.val().status === 'waiting') {
+            frSearchResult = { found: true, isRoom: true, room: snap.val() };
+          } else {
+            frSearchResult = { found: false, query: q, isRoom: true };
+          }
+        } catch (e) {
+          frSearchResult = { found: false, query: q, isRoom: true };
+        }
+        renderFriendsScreen();
+        vibrate(15);
+        return;
+      }
 
-  // Mock/bot user
-  if (usersDB[q] && usersDB[q].isMock) {
-    frSearchResult = { found: true, user: usersDB[q] };
-    renderFriendsScreen();
-    vibrate(15);
-    return;
-  }
+      // Self
+      if (q === profile.uid) {
+        frSearchResult = { found: true, self: true, user: usersDB[profile.uid] };
+        renderFriendsScreen();
+        return;
+      }
 
-  if (!fbReady) {
-    frSearchResult = { found: false, query: q };
-    showToast('⚠️ Firebase কনফিগ করা হয়নি');
-    renderFriendsScreen();
-    return;
-  }
+      // Mock/bot user
+      if (usersDB[q] && usersDB[q].isMock) {
+        frSearchResult = { found: true, user: usersDB[q] };
+        renderFriendsScreen();
+        vibrate(15);
+        return;
+      }
 
-  frSearchResult = { loading: true, query: q };
-  renderFriendsScreen();
+      if (!fbReady) {
+        frSearchResult = { found: false, query: q };
+        showToast('⚠️ Firebase কনফিগ করা হয়নি');
+        renderFriendsScreen();
+        return;
+      }
 
-  try {
-    const snap = await fbDB.ref('users/' + q).get();
-    if (snap.exists()) {
-      const u = snap.val();
-      usersDB[q] = Object.assign(usersDB[q] || { friends: [], friendRequests: [], sentRequests: [] }, u);
-      frSearchResult = { found: true, user: usersDB[q] };
-    } else {
-      frSearchResult = { found: false, query: q };
-    }
-  } catch (e) {
-    frSearchResult = { found: false, query: q, errorDetail: (e && (e.code || e.message)) || String(e) };
-  }
-  renderFriendsScreen();
-  vibrate(15);
+      frSearchResult = { loading: true, query: q };
+      renderFriendsScreen();
+
+      try {
+        const snap = await fbDB.ref('users/' + q).get();
+        if (snap.exists()) {
+          const u = snap.val();
+          usersDB[q] = Object.assign(usersDB[q] || { friends: [], friendRequests: [], sentRequests: [] }, u);
+          frSearchResult = { found: true, user: usersDB[q] };
+        } else {
+          frSearchResult = { found: false, query: q };
+        }
+      } catch (e) {
+        frSearchResult = { found: false, query: q, errorDetail: (e && (e.code || e.message)) || String(e) };
+      }
+      renderFriendsScreen();
+      vibrate(15);
     }
 
     function buildSearchResultCard(res) {
@@ -4655,28 +4574,27 @@ async function doFriendSearch() {
       if (res.isRoom) {
         if (!res.found) {
           card.className = 'fr-result-card not-found';
-          card.innerHTML = `
-            <div class="fr-not-found-icon">❌</div>
-            <div class="fr-not-found-text">রুম পাওয়া যায়নি: <b style="color:#ffde00;">${escapeHtml(res.query)}</b></div>
-            <div class="fr-not-found-hint">রুমটা হয়তো পূর্ণ হয়ে গেছে বা বাতিল হয়ে গেছে</div>
-          `;
+          card.innerHTML = `❌ রুম পাওয়া যায়নি<br><b style="color:#ffde00;">${escapeHtml(res.query)}</b><br><span style="font-size:10.5px;opacity:0.8;">রুমটা হয়তো পূর্ণ বা বাতিল হয়ে গেছে</span>`;
           return card;
         }
         const room = res.room;
-        card.className = 'fr-result-card found';
+        card.className = 'fr-result-card';
         card.innerHTML = `
-          <div class="fr-avatar-lg">${room.creator_photo || '👤'}</div>
-          <div class="fr-name-lg">${escapeHtml(room.creator_name)}-এর রুম</div>
-          <div class="fr-uid-lg">🌐 ${escapeHtml(room.room_id)}</div>
-          <div class="fr-status-line">🪙 ${formatCoins(room.coin_amount)} কয়েন · ${room.mode === '1v1' ? '1 vs 1' : '4 Player'} · ${room.players.length}/${room.maxPlayers} জন</div>
+          <div class="fr-result-avatar">${room.creator_photo || '👤'}</div>
+          <div class="fr-result-info">
+            <div class="fr-result-name">${escapeHtml(room.creator_name)}-এর রুম</div>
+            <div class="fr-result-uid">🌐 ${escapeHtml(room.room_id)}</div>
+            <div class="fr-result-status friend">🪙 ${formatCoins(room.coin_amount)} কয়েন · ${room.mode === '1v1' ? '1 vs 1' : '4 Player'} · ${room.players.length}/${room.maxPlayers}</div>
+          </div>
         `;
         const btn = document.createElement('button');
-        btn.className = 'fr-action-btn';
+        btn.className = 'fr-add-btn';
         if (room.players.some(p => p.id === profile.uid)) {
-          btn.innerText = '✅ আপনি ইতিমধ্যে এই রুমে আছেন';
+          btn.innerText = '✅ আছেন';
           btn.disabled = true;
+          btn.classList.add('disabled');
         } else {
-          btn.innerText = '➕ রুমে জয়েন করুন';
+          btn.innerText = '➕ জয়েন';
           btn.onclick = () => attemptJoinRoom(room);
         }
         card.appendChild(btn);
@@ -4684,7 +4602,7 @@ async function doFriendSearch() {
       }
       if (!res.found) {
         card.className = 'fr-result-card not-found';
-        card.innerHTML = `❌ ইউজার পাওয়া যায়নি<br><b style="color:#ffde00;font-family:'Courier New',monospace;letter-spacing:1px;">${escapeHtml(res.query)}</b><br><span style="font-size:10.5px;opacity:0.8;">আইডি সঠিকভাবে লিখুন বা বানান চেক করুন</span>${res.errorDetail ? `<br><span style="font-size:9.5px;opacity:0.7;color:#ff9b9b;">Debug: ${escapeHtml(res.errorDetail)}</span>` : ''}`;
+        card.innerHTML = `❌ ইউজার পাওয়া যায়নি<br><b style="color:#ffde00;font-family:'Courier New',monospace;letter-spacing:1px;">${escapeHtml(res.query)}</b><br><span style="font-size:10.5px;opacity:0.8;">আইডি সঠিকভাবে লিখুন</span>${res.errorDetail ? `<br><span style="font-size:9.5px;opacity:0.7;color:#ff9b9b;">Debug: ${escapeHtml(res.errorDetail)}</span>` : ''}`;
         return card;
       }
       const u = res.user;
@@ -4702,9 +4620,9 @@ async function doFriendSearch() {
       let statusHtml = '';
       const myData = usersDB[profile.uid];
       const isSelf = u.uid === profile.uid;
-      const isFriend = myData.friends.includes(u.uid);
-      const isSent = myData.sentRequests.includes(u.uid);
-      const isReceived = myData.friendRequests.includes(u.uid);
+      const isFriend = (myData.friends || []).includes(u.uid);
+      const isSent = (myData.sentRequests || []).includes(u.uid);
+      const isReceived = (myData.friendRequests || []).includes(u.uid);
 
       if (isSelf) {
         statusHtml = '<div class="fr-result-status me">✨ এটা আপনার নিজের আইডি</div>';
@@ -4898,7 +4816,6 @@ async function doFriendSearch() {
       if ((me.friendRequests || []).includes(targetUid)) { acceptFriendRequest(targetUid); return; }
 
       if (other.isMock) {
-        // বট/মক ইউজার — শুধু লোকাল সিমুলেশন, Firebase ছোঁয়া হয় না
         me.sentRequests.push(targetUid);
         if (!other.friendRequests.includes(profile.uid)) other.friendRequests.push(profile.uid);
         saveUsersDB();
@@ -4912,7 +4829,7 @@ async function doFriendSearch() {
           updates['friends/' + profile.uid + '/sentRequests/' + targetUid] = true;
           updates['friends/' + targetUid + '/requestsIncoming/' + profile.uid] = true;
           await fbDB.ref().update(updates);
-        } catch (e) { showToast('⚠️ রিকোয়েস্ট পাঠানো যায়নি, আবার চেষ্টা করুন'); return; }
+        } catch (e) { showToast('⚠️ রিকোয়েস্ট পাঠানো যায়নি'); return; }
       }
 
       vibrate([30, 15, 30]);
@@ -5184,12 +5101,10 @@ async function doFriendSearch() {
     let chatListenerRef = null;
     let chatListenerPairId = null;
 
-    // ফায়ারবেসে দুই ইউজারের নির্দিষ্ট চ্যাট থ্রেড রিয়েল-টাইমে লিসেন করে —
-    // অন্য ডিভাইস থেকে মেসেজ এলে সাথে সাথে UI-তে চলে আসবে।
     function attachChatListener(otherUid) {
       if (!fbReady) return;
       const other = usersDB[otherUid];
-      if (other && other.isMock) return; // মক ইউজারের সাথে লোকাল সিমুলেশনই থাক
+      if (other && other.isMock) return;
       const pairId = getConversationId(profile.uid, otherUid);
       if (chatListenerPairId === pairId && chatListenerRef) return;
       if (chatListenerRef) chatListenerRef.off();
@@ -5330,7 +5245,6 @@ async function doFriendSearch() {
 
       const other = usersDB[currentChatUserId];
       if (other && other.isMock) {
-        // মক ইউজার — লোকাল সিমুলেশন (আগের মতোই)
         const conv = getOrCreateConversation(profile.uid, currentChatUserId);
         conv.messages.push(msgObj);
         conv.last_updated = Date.now();
@@ -5345,8 +5259,6 @@ async function doFriendSearch() {
       const pairId = getConversationId(profile.uid, currentChatUserId);
       fbDB.ref('chats/' + pairId + '/messages/' + msgObj.id).set(msgObj)
         .catch(() => showToast('⚠️ মেসেজ পাঠানো যায়নি'));
-      // মেসেজ UI-তে renderChatMessages() নিজে থেকেই আসবে attachChatListener-এর
-      // realtime 'value' লিসেনারের মাধ্যমে — এখানে আলাদা করে লিখতে হবে না।
     }
 
     function simulateMockReply(myUid, mockUid) {
