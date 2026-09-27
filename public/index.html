@@ -99,7 +99,6 @@
     }
     .mode-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 
-    /* ---------- TOP AREA (profile + nav bar) ---------- */
     .mode-top-area {
       position: absolute;
       top: 12px; left: 12px; right: 12px;
@@ -112,7 +111,6 @@
     }
     .mode-top-area > * { pointer-events: auto; }
 
-    /* ---------- PROFILE PILL (green glow like reference) ---------- */
     .mode-profile-pill {
       display: flex;
       align-items: center;
@@ -164,7 +162,6 @@
       letter-spacing: 0.4px;
     }
 
-    /* ---------- NAV BAR (gold border, like reference) ---------- */
     .mode-nav-bar {
       width: 100%;
       display: flex;
@@ -256,7 +253,6 @@
       100% { transform: scale(1.15); }
     }
 
-    /* ---------- MODE HEADER ---------- */
     .mode-header { display: flex; flex-direction: column; align-items: center; margin-bottom: 26px; animation: fadeUp 0.6s ease both; }
     .mode-title {
       font-size: 22px; font-weight: 900; color: #ffde00; letter-spacing: 3px;
@@ -269,9 +265,9 @@
       background: linear-gradient(90deg, transparent, var(--theme-accent), transparent);
       margin-top: 12px; border-radius: 2px;
     }
-    .mode-options { display: flex; gap: 20px; animation: fadeUp 0.7s ease 0.15s both; }
+    .mode-options { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; animation: fadeUp 0.7s ease 0.15s both; }
     .mode-card {
-      width: 145px; height: 200px;
+      width: 128px; height: 190px;
       background: linear-gradient(160deg, #1a3260 0%, #0a1729 100%);
       border: 2px solid #2c5599; border-radius: 16px;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -323,7 +319,6 @@
       border-radius: 8px; font-weight: 900;
     }
 
-    /* ==================== GLOBAL ROOM SCREEN ==================== */
     .global-room-screen {
       position: fixed; inset: 0; z-index: 85;
       background: radial-gradient(circle at center, var(--theme-c1) 0%, var(--theme-c2) 100%);
@@ -1036,6 +1031,8 @@
 
     #room-overlay { z-index: 121; }
     #room-overlay .mini-card { max-width: 400px; }
+    #group-room-overlay { z-index: 123; }
+    #group-room-overlay .mini-card { max-width: 420px; }
     .room-code-display {
       background: linear-gradient(135deg, rgba(255,204,0,0.18), rgba(255,204,0,0.03));
       border: 2px dashed rgba(255,204,0,0.55);
@@ -1053,7 +1050,7 @@
       user-select: text; -webkit-user-select: text;
       padding-left: 5px;
     }
-    .room-code-hint { font-size: 9.5px; color: #8bb4f0; font-weight: bold; letter-spacing: 0.3px; font-family: Arial, sans-serif; margin-top: 2px; }
+    .room-code-hint { font-size: 9.5px; color: #8bb4f0; font-weight: bold; letter-spacing: 0.3px; font-family: Arial, sans-serif; margin-top: 2px; text-align: center; }
     .room-code-copy-btn {
       position: absolute; top: 10px; right: 10px;
       background: rgba(255,255,255,0.1);
@@ -1138,7 +1135,6 @@
     }
     .lk-toast.show { opacity: 1; transform: translate(-50%, 0); }
 
-    /* ==================== FRIENDS SYSTEM ==================== */
     .friends-screen {
       position: fixed; inset: 0; z-index: 87;
       background: radial-gradient(circle at center, var(--theme-c1) 0%, var(--theme-c2) 100%);
@@ -1381,7 +1377,6 @@
       color: #fff; box-shadow: 0 3px 8px rgba(196,26,26,0.4);
     }
 
-    /* ==================== INBOX / CHAT SYSTEM ==================== */
     .inbox-screen {
       position: fixed; inset: 0; z-index: 88;
       background: radial-gradient(circle at center, var(--theme-c1) 0%, var(--theme-c2) 100%);
@@ -1625,7 +1620,6 @@
     .chat-send-btn:active { transform: scale(0.9); filter: brightness(1.15); }
     .chat-send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-    /* ==================== VS SCREEN ==================== */
     .vs-screen {
       position: fixed; inset: 0; z-index: 150;
       background: radial-gradient(circle at center, #1e3d75 0%, #050a14 75%);
@@ -1947,6 +1941,17 @@
         <div class="mode-label">4 PLAYERS</div>
         <div class="mode-desc">চার জন খেলোয়াড়</div>
       </div>
+      <div class="mode-card" onclick="selectGroupMatch()">
+        <div class="mode-badge">GRP</div>
+        <div class="mode-icon mode-icon-4p">
+          <div class="mini-pawn pawn-blue-mini"></div>
+          <div class="mini-pawn pawn-red-mini"></div>
+          <div class="mini-pawn pawn-yellow-mini"></div>
+          <div class="mini-pawn pawn-green-mini"></div>
+        </div>
+        <div class="mode-label">GROUP</div>
+        <div class="mode-desc">বন্ধুদের সাথে</div>
+      </div>
     </div>
   </div>
 
@@ -2033,7 +2038,6 @@
     <div class="gr-list" id="gr-list"></div>
   </div>
 
-  <!-- ==================== FRIENDS SCREEN ==================== -->
   <div class="friends-screen hidden" id="friends-screen">
     <div class="fr-header">
       <button class="tb-btn tb-home" onclick="closeFriendsScreen()">
@@ -2059,7 +2063,7 @@
 
     <div class="fr-body">
       <div class="fr-search-box">
-        <div class="fr-search-label">🔍 ইউজার আইডি অথবা রুম কোড দিয়ে সার্চ করুন</div>
+        <div class="fr-search-label">🔍 ইউজার আইডি / এডমিন UID / রুম কোড সার্চ</div>
         <div class="fr-search-row">
           <input class="fr-search-input" id="fr-search-input"
                  placeholder="যেমন: LK-RAHIM001 অথবা R-XXXXXX"
@@ -2073,7 +2077,6 @@
     </div>
   </div>
 
-  <!-- ==================== INBOX SCREEN ==================== -->
   <div class="inbox-screen hidden" id="inbox-screen">
     <div class="inbox-header">
       <button class="tb-btn tb-home" onclick="closeInboxScreen()">
@@ -2089,7 +2092,6 @@
     <div class="inbox-list" id="inbox-list"></div>
   </div>
 
-  <!-- ==================== CHAT SCREEN ==================== -->
   <div class="chat-screen hidden" id="chat-screen">
     <div class="chat-header">
       <button class="tb-btn tb-home" onclick="closeChatScreen()">
@@ -2280,6 +2282,40 @@
     </div>
   </div>
 
+  <!-- ========== GROUP ROOM OVERLAY ========== -->
+  <div class="mini-overlay" id="group-room-overlay">
+    <div class="mini-card">
+      <div class="mini-title">👥 গ্রুপ ম্যাচ রুম</div>
+      <div class="room-code-display">
+        <div class="room-code-label">এডমিন UID — বন্ধুদের শেয়ার করুন</div>
+        <div class="room-code-value" id="group-admin-uid" style="font-size:17px;letter-spacing:2px;">LK-XXXXXXXX</div>
+        <div class="room-code-hint">বন্ধুরা বন্ধু সিস্টেমে এই UID সার্চ করে জয়েন করবে</div>
+        <button class="room-code-copy-btn" onclick="copyGroupAdminUID()" title="কপি">📋</button>
+      </div>
+      <div class="room-share-row">
+        <button class="share-btn whatsapp" onclick="shareGroupRoom('whatsapp')">
+          <span class="sb-ico">📱</span>WhatsApp
+        </button>
+        <button class="share-btn messenger" onclick="shareGroupRoom('messenger')">
+          <span class="sb-ico">💬</span>Messenger
+        </button>
+        <button class="share-btn copy" onclick="shareGroupRoom('copy')">
+          <span class="sb-ico">🔗</span>কপি
+        </button>
+      </div>
+      <div class="room-players" id="group-room-players"></div>
+      <div class="room-status" id="group-room-status">
+        <span><span class="rs-dot"></span>খেলোয়াড়দের জন্য অপেক্ষা...</span>
+      </div>
+      <div class="mini-actions">
+        <button class="mini-btn ghost" onclick="leaveGroupRoom()">বাতিল</button>
+        <button class="mini-btn" id="group-start-btn" onclick="startGroupMatch()" disabled>
+          ⏳ অপেক্ষা (1/4)
+        </button>
+      </div>
+    </div>
+  </div>
+
   <div class="profile-overlay" id="settings-overlay" onclick="settingsOverlayClick(event)">
     <div class="settings-panel">
       <div class="settings-header">
@@ -2427,9 +2463,8 @@
         <li><span class="ht-ico">⚔️</span><span>প্রতিপক্ষের গুটির ঘরে গেলে সেটি <b>কাটা</b> পড়ে ইয়ার্ডে ফিরে যায় — আর আপনি বোনাস চাল পান।</span></li>
         <li><span class="ht-ico">⭐</span><span><b>তারাযুক্ত ঘর</b> হলো সেফ জোন। সেখানে কোনো গুটি কাটা যায় না।</span></li>
         <li><span class="ht-ico">💰</span><span><b>কয়েন ম্যাচে</b> এন্ট্রি ফি দিয়ে খেলুন। যে জিতবে সে মোট পুল থেকে <b>১০% সিস্টেম ফি</b> বাদ দিয়ে বাকি সব প্রাইজ হিসেবে পাবে।</span></li>
-        <li><span class="ht-ico">⚠️</span><span><b>রুম বাতিল বা টাইম শেষ</b> হলে সব খেলোয়াড়ের <b>সম্পূর্ণ কয়েন ফেরত</b> পাবেন। কিন্তু <b>ম্যাচ চলাকালীন বের হলে</b> শুধু বের হওয়া খেলোয়াড়ের <b>৩০% কয়েন কাটা</b> হবে, বাকি ৭০% ফেরত পাবে।</span></li>
-        <li><span class="ht-ico">👥</span><span><b>বন্ধু সিস্টেমে</b> UID সার্চ করে ফ্রেন্ড রিকোয়েস্ট পাঠান, গ্রহণ করুন।</span></li>
-        <li><span class="ht-ico">💬</span><span><b>ইনবক্সে</b> যেকোনো ইউজারের সাথে চ্যাট করুন। Message বাটনে ক্লিক করলেই নতুন বা পুরোনো চ্যাট ওপেন হবে।</span></li>
+        <li><span class="ht-ico">👥</span><span><b>গ্রুপ ম্যাচে</b> এডমিন রুম খোলে, বন্ধুরা এডমিন UID সার্চ করে জয়েন করে। ৪ জন পূর্ণ হলে এডমিন Start চাপে।</span></li>
+        <li><span class="ht-ico">⚠️</span><span><b>রুম বাতিল বা টাইম শেষ</b> হলে সব খেলোয়াড়ের <b>সম্পূর্ণ কয়েন ফেরত</b> পাবেন।</span></li>
         <li><span class="ht-ico">🏆</span><span>যে খেলোয়াড় সবার আগে <b>৪টি গুটি</b> হোমে পৌঁছাবে, সে-ই বিজয়ী।</span></li>
       </ul>
       <button class="mini-btn wide" onclick="closeHowToPlay()">বুঝেছি</button>
@@ -3331,7 +3366,7 @@
     function renderGlobalRooms() {
       const list = document.getElementById('gr-list');
       list.innerHTML = '';
-      const active = globalRooms.filter(r => r.status === 'waiting');
+      const active = globalRooms.filter(r => r.status === 'waiting' && !r.isGroupMatch);
       if (active.length === 0) {
         list.innerHTML = '<div class="gr-empty">🌐 এই মুহূর্তে কোনো খোলা রুম নেই।<br>➕ উপরের বাটনে চাপ দিয়ে নতুন রুম তৈরি করুন!</div>';
         return;
@@ -3712,6 +3747,7 @@
       closeExitConfirm();
       if (gameActive && currentBetInfo) handleInGameQuit();
       if (currentRoom) cancelRoom();
+      if (isGroupGame) leaveGroupRoom();
       document.getElementById('game-wrapper').classList.remove('visible');
       document.getElementById('bet-badge').classList.remove('show');
       document.getElementById('global-room-screen').classList.add('hidden');
@@ -3719,6 +3755,7 @@
       document.getElementById('inbox-screen').classList.add('hidden');
       document.getElementById('chat-screen').classList.add('hidden');
       document.getElementById('vs-screen').classList.remove('show');
+      document.getElementById('group-room-overlay').classList.remove('show');
       currentBetInfo = null;
       setTimeout(() => {
         document.getElementById('mode-screen').classList.remove('hidden');
@@ -4081,12 +4118,21 @@
 
     function updateTurnUI() {
       ALL_PLAYERS.forEach(color => {
-        document.getElementById(`card-${color}`).classList.remove('card-active');
+        const el = document.getElementById(`card-${color}`);
+        if (el) el.classList.remove('card-active');
       });
       const activeColor = activePlayers[turnIndex];
-      document.getElementById(`card-${activeColor}`).classList.add('card-active');
-      document.getElementById('status-text').innerText =
-        `${activeColor.toUpperCase()}-এর চাল! আপনার ডায়াইসে চাপ দিন।`;
+      const activeEl = document.getElementById(`card-${activeColor}`);
+      if (activeEl) activeEl.classList.add('card-active');
+      if (isGroupGame && gameActive && activeColor !== myColor) {
+        document.getElementById('status-text').innerText =
+          `⏳ ${activeColor.toUpperCase()}-এর চাল... অপেক্ষা করুন`;
+        canRoll = false;
+      } else {
+        document.getElementById('status-text').innerText =
+          `${activeColor.toUpperCase()}-এর চাল! আপনার ডায়াইসে চাপ দিন।`;
+        if (isGroupGame && gameActive) canRoll = true;
+      }
     }
     function nextTurn() {
       consecutiveSixes = 0;
@@ -4229,7 +4275,7 @@
       } else nextTurn();
     }
     function handleMatchWin(winnerColor) {
-      const isPlayerWin = (winnerColor === 'blue');
+      const isPlayerWin = (winnerColor === myColor);
       document.getElementById('status-text').innerText =
         `🎉 ${winnerColor.toUpperCase()} বিজয়ী হয়েছে! 🎉`;
       canRoll = false;
@@ -4261,15 +4307,17 @@
     function startGame(mode, isBetMatch, roomPlayers) {
       if (mode === '1v1') activePlayers = ['blue', 'green'];
       else activePlayers = ['blue', 'red', 'green', 'yellow'];
+      if (!isGroupGame) myColor = activePlayers[0];
       ALL_PLAYERS.forEach(color => {
         const card = document.getElementById(`card-${color}`);
-        card.style.display = activePlayers.includes(color) ? '' : 'none';
+        if (card) card.style.display = activePlayers.includes(color) ? '' : 'none';
       });
       applyProfileToGameCard();
       const t = document.getElementById('tb-title');
       if (t) {
         const modeLabel = mode === '1v1' ? '1 vs 1' : '4 PLAYER';
-        t.innerText = isBetMatch ? `${modeLabel} · 💰 কয়েন এন্ট্রি` : `${modeLabel} MATCH`;
+        if (isGroupGame) t.innerText = modeLabel + ' · 👥 গ্রুপ';
+        else t.innerText = isBetMatch ? `${modeLabel} · 💰 কয়েন এন্ট্রি` : `${modeLabel} MATCH`;
       }
       document.getElementById('mode-screen').classList.add('hidden');
       document.getElementById('global-room-screen').classList.add('hidden');
@@ -4280,6 +4328,429 @@
       gameActive = true;
       amQuitter = false;
       updateTurnUI();
+    }
+
+    /* ============================================================
+       ===============  GROUP MATCH (REAL-TIME)  ==================
+       ============================================================ */
+    let myColor = 'blue';
+    let isGroupGame = false;
+    let groupRoomData = null;
+    let groupRoomFbRef = null;
+    let groupRoomListener = null;
+    let groupGameRef = null;
+    let groupTurnListener = null;
+    let groupMovesListener = null;
+    let groupDiceListener = null;
+    let groupGameStarted = false;
+    const groupAppliedMoves = {};
+
+    function selectGroupMatch() {
+      getAudioCtx();
+      if (isUserInAnyRoom()) {
+        showToast('আপনি ইতিমধ্যে একটি রুমে আছেন');
+        return;
+      }
+      createGroupRoom();
+    }
+
+    async function createGroupRoom() {
+      if (!fbReady) { showToast('⚠️ Firebase কনফিগ করা হয়নি'); return; }
+      const roomId = generateRoomId();
+      const room = {
+        room_id: roomId,
+        creator_id: profile.uid,
+        creator_name: profile.name,
+        creator_photo: profile.avatar,
+        mode: '4p',
+        coin_amount: 0,
+        maxPlayers: 4,
+        players: [{ id: profile.uid, name: profile.name, photo: profile.avatar, isCreator: true }],
+        status: 'waiting',
+        isGroupMatch: true,
+        createdAt: Date.now(),
+        expiresAt: Date.now() + ROOM_EXPIRE_MS
+      };
+      try { await fbDB.ref('rooms/' + roomId).set(room); }
+      catch (e) { showToast('⚠️ রুম তৈরি করা যায়নি'); return; }
+      myColor = 'blue';
+      isGroupGame = true;
+      groupGameStarted = false;
+      groupRoomData = room;
+      attachGroupRoomListener(roomId);
+      openGroupRoomPanel();
+      showToast('✅ গ্রুপ রুম তৈরি! UID শেয়ার করুন।');
+      vibrate([30, 20, 30]);
+    }
+
+    function attachGroupRoomListener(roomId) {
+      if (groupRoomListener && groupRoomFbRef) groupRoomFbRef.off('value', groupRoomListener);
+      groupRoomFbRef = fbDB.ref('rooms/' + roomId);
+      groupRoomListener = groupRoomFbRef.on('value', (snap) => {
+        const data = snap.val();
+        if (!data) {
+          if (groupRoomData) {
+            showToast('রুম বন্ধ হয়ে গেছে');
+            closeGroupRoomOverlay();
+          }
+          return;
+        }
+        groupRoomData = data;
+        renderGroupRoomSlots();
+        updateGroupRoomStatus();
+        updateGroupStartBtn();
+        if (data.status === 'full' && data.isGroupMatch && !groupGameStarted && data.game && data.game.started) {
+          groupGameStarted = true;
+          beginGroupGame();
+        }
+      });
+    }
+
+    function openGroupRoomPanel() {
+      document.getElementById('group-admin-uid').innerText = profile.uid;
+      renderGroupRoomSlots();
+      updateGroupRoomStatus();
+      updateGroupStartBtn();
+      document.getElementById('group-room-overlay').classList.add('show');
+    }
+
+    function closeGroupRoomOverlay() {
+      document.getElementById('group-room-overlay').classList.remove('show');
+      if (groupRoomListener && groupRoomFbRef) groupRoomFbRef.off('value', groupRoomListener);
+      if (groupGameRef && groupTurnListener) groupGameRef.child('turn').off('value', groupTurnListener);
+      if (groupGameRef && groupMovesListener) groupGameRef.child('moves').off('child_added', groupMovesListener);
+      if (groupGameRef && groupDiceListener) groupGameRef.child('lastDice').off('value', groupDiceListener);
+      groupRoomListener = groupTurnListener = groupMovesListener = groupDiceListener = null;
+      groupRoomFbRef = groupGameRef = null;
+      groupRoomData = null;
+      isGroupGame = false;
+      groupGameStarted = false;
+    }
+
+    function renderGroupRoomSlots() {
+      const container = document.getElementById('group-room-players');
+      if (!container || !groupRoomData) return;
+      container.innerHTML = '';
+      const slotColors = ['#0059c9', '#c41a1a', '#007a3d', '#d9a800'];
+      for (let i = 0; i < 4; i++) {
+        const p = groupRoomData.players[i];
+        const slot = document.createElement('div');
+        if (p) {
+          slot.className = 'room-player-slot filled';
+          if (p.id === profile.uid) slot.classList.add('ready');
+          slot.innerHTML = `
+            <div class="rps-avatar" style="border-color:${slotColors[i]}">${p.photo}</div>
+            <div class="rps-info">
+              <div class="rps-name">${escapeHtml(p.name)}${p.id === profile.uid ? ' (আপনি)' : ''}</div>
+              <div class="rps-status">${p.isCreator ? '👑 এডমিন' : '✅ জয়েন করেছে'}</div>
+            </div>
+            <div class="rps-badge" style="background:${slotColors[i]};color:#fff;">SLOT ${i+1}</div>
+          `;
+        } else {
+          slot.className = 'room-player-slot waiting';
+          slot.innerHTML = `
+            <div class="rps-avatar">➕</div>
+            <div class="rps-info">
+              <div class="rps-name">খেলোয়াড়ের অপেক্ষা...</div>
+              <div class="rps-status">এডমিন UID শেয়ার করুন</div>
+            </div>
+            <div class="rps-badge">SLOT ${i+1}</div>
+          `;
+        }
+        container.appendChild(slot);
+      }
+    }
+
+    function updateGroupRoomStatus() {
+      const el = document.getElementById('group-room-status');
+      if (!el || !groupRoomData) return;
+      const count = groupRoomData.players.length;
+      if (count >= 4) {
+        el.innerHTML = '<span>🎯 সবাই যোগ দিয়েছে! এডমিন Start চাপুন...</span>';
+      } else {
+        el.innerHTML = `<span><span class="rs-dot"></span>${4 - count} জন খেলোয়াড়ের জন্য অপেক্ষা...</span>`;
+      }
+    }
+
+    function updateGroupStartBtn() {
+      const btn = document.getElementById('group-start-btn');
+      if (!btn || !groupRoomData) return;
+      const isAdmin = groupRoomData.creator_id === profile.uid;
+      if (!isAdmin) { btn.style.display = 'none'; return; }
+      btn.style.display = '';
+      const n = groupRoomData.players.length;
+      if (n < 4) {
+        btn.disabled = true;
+        btn.innerText = `⏳ অপেক্ষা (${n}/4)`;
+      } else {
+        btn.disabled = false;
+        btn.innerText = '▶️ Start';
+      }
+    }
+
+    async function startGroupMatch() {
+      if (!groupRoomData) return;
+      if (groupRoomData.creator_id !== profile.uid) return;
+      if (groupRoomData.players.length < 4) { showToast('৪ জন খেলোয়াড় দরকার'); return; }
+      try {
+        await fbDB.ref('rooms/' + groupRoomData.room_id).update({
+          status: 'full',
+          game: { started: true, turn: 'blue', startTs: Date.now() }
+        });
+      } catch (e) { showToast('⚠️ Start করা যায়নি'); }
+    }
+
+    async function leaveGroupRoom() {
+      if (!groupRoomData) { closeGroupRoomOverlay(); return; }
+      const roomId = groupRoomData.room_id;
+      const isAdmin = groupRoomData.creator_id === profile.uid;
+      if (isAdmin) {
+        if (!confirm('রুম বাতিল করবেন? সব খেলোয়াড় বেরিয়ে যাবে।')) return;
+        try { await fbDB.ref('rooms/' + roomId).remove(); } catch (e) {}
+      } else {
+        try {
+          const snap = await fbDB.ref('rooms/' + roomId).get();
+          if (snap.exists()) {
+            const r = snap.val();
+            r.players = (r.players || []).filter(p => p.id !== profile.uid);
+            await fbDB.ref('rooms/' + roomId).update({ players: r.players });
+          }
+        } catch (e) {}
+      }
+      closeGroupRoomOverlay();
+      showToast('রুম ছেড়ে দেওয়া হয়েছে');
+    }
+
+    function copyGroupAdminUID() {
+      fallbackCopy(profile.uid, () => showToast('UID কপি: ' + profile.uid));
+    }
+
+    function shareGroupRoom(platform) {
+      const msg = `🎲 Ludo King গ্রুপ ম্যাচ!\n\n👑 এডমিন UID: ${profile.uid}\n\nবন্ধু সিস্টেমে এই UID সার্চ করে সরাসরি জয়েন করুন!`;
+      if (platform === 'whatsapp') {
+        try { window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank'); }
+        catch (e) { fallbackCopy(msg, () => showToast('কপি হয়েছে')); }
+      } else if (platform === 'messenger') {
+        if (navigator.share) navigator.share({ title: 'Ludo Group Match', text: msg }).catch(() => fallbackCopy(msg, () => showToast('কপি হয়েছে')));
+        else fallbackCopy(msg, () => showToast('কপি হয়েছে'));
+      } else fallbackCopy(msg, () => showToast('কপি হয়েছে'));
+    }
+
+    async function joinGroupRoom(room) {
+      if (!room || !room.isGroupMatch) return;
+      if (room.status !== 'waiting') { showToast('এই রুম আর খোলা নেই'); return; }
+      if (room.players.some(p => p.id === profile.uid)) { showToast('আপনি ইতিমধ্যে এই রুমে আছেন'); return; }
+      if (room.players.length >= 4) { showToast('রুম পূর্ণ!'); return; }
+      if (!fbReady) { showToast('⚠️ Firebase কনফিগ করা হয়নি'); return; }
+
+      const roomRef = fbDB.ref('rooms/' + room.room_id);
+      let result;
+      try {
+        result = await roomRef.transaction((current) => {
+          if (!current || current.status !== 'waiting') return current;
+          if (!Array.isArray(current.players)) current.players = [];
+          if (current.players.some(p => p.id === profile.uid)) return current;
+          if (current.players.length >= 4) return current;
+          current.players.push({ id: profile.uid, name: profile.name, photo: profile.avatar, isCreator: false });
+          return current;
+        });
+      } catch (e) { showToast('⚠️ জয়েন করা যায়নি'); return; }
+      if (!result.committed) { showToast('⚠️ জয়েন করা যায়নি'); return; }
+      const updated = result.snapshot.val();
+      const myIdx = updated.players.findIndex(p => p.id === profile.uid);
+      if (myIdx < 0) { showToast('জয়েন ব্যর্থ'); return; }
+      const colors = ['blue', 'red', 'green', 'yellow'];
+      myColor = colors[myIdx];
+      isGroupGame = true;
+      groupGameStarted = false;
+      groupRoomData = updated;
+      showToast('✅ গ্রুপ রুমে জয়েন করেছেন!');
+      vibrate([30, 20, 30]);
+      attachGroupRoomListener(room.room_id);
+      openGroupRoomPanel();
+    }
+
+    function beginGroupGame() {
+      if (!groupRoomData || gameActive) return;
+      const players = groupRoomData.players;
+      const colors = ['blue', 'red', 'green', 'yellow'];
+      const myIdx = players.findIndex(p => p.id === profile.uid);
+      if (myIdx >= 0) myColor = colors[myIdx];
+      const vsPlayers = players.map((p, i) => ({
+        color: colors[i],
+        name: p.id === profile.uid ? profile.name : p.name,
+        avatar: p.photo,
+        isMe: p.id === profile.uid
+      }));
+      closeGroupRoomOverlay();
+      vibrate([40, 25, 40, 25, 80]);
+      showVSScreen(vsPlayers, '4p', () => {
+        startGame('4p', false);
+        attachGroupGameSync();
+        showToast('🎯 আপনি ' + myColor.toUpperCase() + ' — আপনার পালায় খেলুন!');
+      });
+    }
+
+    function attachGroupGameSync() {
+      if (!groupRoomData || !fbReady) return;
+      const roomId = groupRoomData.room_id;
+      groupGameRef = fbDB.ref('rooms/' + roomId + '/game');
+
+      groupTurnListener = groupGameRef.child('turn').on('value', (snap) => {
+        const t = snap.val();
+        if (!t || !t.color) return;
+        const idx = activePlayers.indexOf(t.color);
+        if (idx >= 0) {
+          turnIndex = idx;
+          canRoll = (t.color === myColor);
+          consecutiveSixes = 0;
+          updateTurnUI();
+        }
+      });
+
+      groupMovesListener = groupGameRef.child('moves').on('child_added', (snap) => {
+        const move = snap.val();
+        if (!move || !move.seq) return;
+        if (groupAppliedMoves[move.seq]) return;
+        groupAppliedMoves[move.seq] = true;
+        applyGroupMove(move);
+      });
+
+      groupDiceListener = groupGameRef.child('lastDice').on('value', (snap) => {
+        const d = snap.val();
+        if (!d || !d.color) return;
+        const faces = ['⚀','⚁','⚂','⚃','⚄','⚅'];
+        const el = document.getElementById(`dice-${d.color}`);
+        if (el) el.innerText = faces[d.value - 1];
+      });
+    }
+
+    function publishGroupDice(value) {
+      if (!groupGameRef) return;
+      groupGameRef.child('lastDice').set({ color: myColor, value, ts: Date.now() });
+    }
+
+    function publishGroupMove(pawn, dice) {
+      if (!groupGameRef) return;
+      const seq = Date.now() + '_' + Math.random().toString(36).slice(2, 6);
+      groupGameRef.child('moves/' + seq).set({
+        seq, color: pawn.color, pawnId: pawn.id,
+        fromStep: pawn.step, dice, ts: Date.now()
+      });
+    }
+
+    function publishGroupTurn(nextColor) {
+      if (!groupGameRef) return;
+      groupGameRef.child('turn').set({ color: nextColor, ts: Date.now() });
+    }
+
+    function applyGroupMove(move) {
+      const pawn = pawns.find(p => p.id === move.pawnId);
+      if (!pawn) return;
+      if (pawn.step !== move.fromStep) return;
+      const toStep = move.fromStep === -1 ? 0 : move.fromStep + move.dice;
+      pawn.element.classList.remove('highlight');
+      animatePawnMove(pawn, move.fromStep, toStep, () => {
+        let captured = false, landedOnSafe = false;
+        if (pawn.step >= 0 && pawn.step < 51) {
+          const curIdx = (playerConfigs[pawn.color].startIndex + pawn.step) % 52;
+          if (safeIndices.includes(curIdx)) { landedOnSafe = true; playSafeZoneSound(); }
+          if (!safeIndices.includes(curIdx)) {
+            const opp = pawns.filter(p =>
+              p.color !== pawn.color && p.step >= 0 && p.step < 51 &&
+              ((playerConfigs[p.color].startIndex + p.step) % 52) === curIdx
+            );
+            if (opp.length === 1) {
+              const victim = opp[0];
+              victim.step = -1; renderPawn(victim);
+              captured = true; playCaptureSound();
+              document.getElementById('status-text').innerText = `${victim.color.toUpperCase()}-এর গুটি কাটা পড়লো!`;
+            }
+          }
+        }
+        if (checkWin(pawn.color)) { handleMatchWin(pawn.color); return; }
+        const samePlayerAgain = (move.dice === 6 || captured);
+        if (samePlayerAgain) {
+          publishGroupTurn(pawn.color);
+        } else {
+          const curIdx = activePlayers.indexOf(pawn.color);
+          const nextIdx = (curIdx + 1) % activePlayers.length;
+          publishGroupTurn(activePlayers[nextIdx]);
+        }
+      });
+    }
+
+    const _origRollDice = rollDice;
+    rollDice = function () {
+      if (isGroupGame && gameActive) {
+        if (!canRoll) return;
+        if (activePlayers[turnIndex] !== myColor) {
+          showToast('⏳ এখন ' + activePlayers[turnIndex].toUpperCase() + '-এর পালা');
+          return;
+        }
+        getAudioCtx();
+        playDiceRollSound();
+        const diceElem = document.getElementById(`dice-${myColor}`);
+        diceElem.classList.add('rolling');
+        canRoll = false;
+        setTimeout(() => {
+          diceElem.classList.remove('rolling');
+          diceValue = Math.floor(Math.random() * 6) + 1;
+          const faces = ['⚀','⚁','⚂','⚃','⚄','⚅'];
+          diceElem.innerText = faces[diceValue - 1];
+          publishGroupDice(diceValue);
+          if (diceValue === 6) { playSixSound(); consecutiveSixes++; if (consecutiveSixes === 3) {
+            document.getElementById('status-text').innerText = `পরপর ৩ বার ৬! চাল বাতিল।`;
+            setTimeout(() => publishGroupTurn(activePlayers[(turnIndex + 1) % activePlayers.length]), 1200);
+            return;
+          }} else consecutiveSixes = 0;
+          const playerPawns = pawns.filter(p => p.color === myColor);
+          activePawnsToMove = [];
+          playerPawns.forEach(p => {
+            if (p.step === -1 && diceValue === 6) activePawnsToMove.push(p);
+            else if (p.step >= 0 && p.step + diceValue <= 56) activePawnsToMove.push(p);
+          });
+          if (activePawnsToMove.length === 0) {
+            document.getElementById('status-text').innerText = `কোন চাল সম্ভব নয়!`;
+            setTimeout(() => {
+              if (diceValue === 6) {
+                publishGroupTurn(myColor);
+              } else {
+                const cur = activePlayers.indexOf(myColor);
+                publishGroupTurn(activePlayers[(cur + 1) % activePlayers.length]);
+              }
+            }, 1200);
+          } else if (activePawnsToMove.length === 1) {
+            highlightPawns(true);
+            setTimeout(() => onPawnClick(activePawnsToMove[0]), 350);
+          } else {
+            highlightPawns(true);
+            document.getElementById('status-text').innerText = diceValue === 6
+              ? 'ছক্কা! গুটি বেছে নিন।' : 'চাল দেওয়ার জন্য গুটি বেছে নিন।';
+          }
+        }, 400);
+        return;
+      }
+      _origRollDice.call(this);
+    };
+
+    const _origOnPawnClick = onPawnClick;
+    onPawnClick = function (pawn) {
+      if (isGroupGame && gameActive) {
+        if (pawn.color !== myColor) return;
+        if (!activePawnsToMove.includes(pawn)) return;
+        highlightPawn(pawn, false);
+        activePawnsToMove = [];
+        publishGroupMove(pawn, diceValue);
+        return;
+      }
+      _origOnPawnClick.call(this, pawn);
+    };
+
+    // Helper for single-pawn highlight removal
+    function highlightPawn(pawn, enable) {
+      if (enable) pawn.element.classList.add('highlight');
+      else pawn.element.classList.remove('highlight');
     }
 
     /* ============================================================
@@ -4487,13 +4958,11 @@
 
       syncCurrentUserToDB();
 
-      // Auto-fix common prefixes
       if (!q.startsWith('R-') && !q.startsWith('LK-')) {
         if (/^[A-Z0-9]{6}$/.test(q)) q = 'R-' + q;
         else if (q.length === 8) q = 'LK-' + q;
       }
 
-      // LK-XXXXXX (9 chars) = private room code check
       if (q.startsWith('LK-') && q.length === 9 && fbReady) {
         try {
           const roomSnap = await fbDB.ref('rooms/R-' + q.slice(3)).get();
@@ -4503,7 +4972,7 @@
         } catch (e) {}
       }
 
-      // Room code search
+      // Room code search (R-XXXXXX)
       if (q.startsWith('R-')) {
         if (!fbReady) { showToast('⚠️ Firebase কনফিগ করা হয়নি'); return; }
         frSearchResult = { loading: true, query: q };
@@ -4536,6 +5005,27 @@
         renderFriendsScreen();
         vibrate(15);
         return;
+      }
+
+      // Search admin UID for group room
+      if (q.startsWith('LK-') && fbReady) {
+        try {
+          const roomsSnap = await fbDB.ref('rooms').get();
+          if (roomsSnap.exists()) {
+            const rooms = roomsSnap.val();
+            const active = Object.values(rooms).find(r =>
+              r.isGroupMatch && r.status === 'waiting' &&
+              r.creator_id === q && r.expiresAt > Date.now() &&
+              r.players.length < 4
+            );
+            if (active) {
+              frSearchResult = { found: true, isGroupRoom: true, room: active, adminUid: q };
+              renderFriendsScreen();
+              vibrate(15);
+              return;
+            }
+          }
+        } catch (e) {}
       }
 
       if (!fbReady) {
@@ -4571,6 +5061,33 @@
         card.innerHTML = `🔍 খোঁজা হচ্ছে... <b style="color:#ffde00;font-family:'Courier New',monospace;">${escapeHtml(res.query)}</b>`;
         return card;
       }
+
+      // Group room result
+      if (res.isGroupRoom) {
+        const room = res.room;
+        card.className = 'fr-result-card';
+        card.innerHTML = `
+          <div class="fr-result-avatar">👥</div>
+          <div class="fr-result-info">
+            <div class="fr-result-name">${escapeHtml(room.creator_name)}-এর গ্রুপ রুম</div>
+            <div class="fr-result-uid">👑 এডমিন: ${escapeHtml(room.creator_id)}</div>
+            <div class="fr-result-status friend">খেলোয়াড়: ${room.players.length}/4 · ফ্রি ম্যাচ</div>
+          </div>
+        `;
+        const btn = document.createElement('button');
+        btn.className = 'fr-add-btn';
+        if (room.players.some(p => p.id === profile.uid)) {
+          btn.innerText = '✅ আছেন'; btn.disabled = true; btn.classList.add('disabled');
+        } else if (room.players.length >= 4) {
+          btn.innerText = '❌ পূর্ণ'; btn.disabled = true; btn.classList.add('disabled');
+        } else {
+          btn.innerText = '➕ জয়েন';
+          btn.onclick = () => joinGroupRoom(room);
+        }
+        card.appendChild(btn);
+        return card;
+      }
+
       if (res.isRoom) {
         if (!res.found) {
           card.className = 'fr-result-card not-found';
