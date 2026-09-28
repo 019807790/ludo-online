@@ -89,7 +89,6 @@
     .splash-loader span:nth-child(3) { animation-delay: 0.30s; }
     @keyframes bounceDot { 0%,100%{transform:translateY(0) scale(1);opacity:0.5;} 50%{transform:translateY(-12px) scale(1.2);opacity:1;} }
 
-    /* ==================== MODE SCREEN ==================== */
     .mode-screen {
       position: fixed; inset: 0; z-index: 90;
       background: radial-gradient(circle at center, var(--theme-c1) 0%, var(--theme-c2) 100%);
@@ -99,7 +98,6 @@
     }
     .mode-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 
-    /* ---------- TOP AREA (profile + nav bar) ---------- */
     .mode-top-area {
       position: absolute;
       top: 12px; left: 12px; right: 12px;
@@ -112,7 +110,6 @@
     }
     .mode-top-area > * { pointer-events: auto; }
 
-    /* ---------- PROFILE PILL (green glow like reference) ---------- */
     .mode-profile-pill {
       display: flex;
       align-items: center;
@@ -164,7 +161,6 @@
       letter-spacing: 0.4px;
     }
 
-    /* ---------- NAV BAR (gold border, like reference) ---------- */
     .mode-nav-bar {
       width: 100%;
       display: flex;
@@ -256,7 +252,6 @@
       100% { transform: scale(1.15); }
     }
 
-    /* ---------- MODE HEADER ---------- */
     .mode-header { display: flex; flex-direction: column; align-items: center; margin-bottom: 26px; animation: fadeUp 0.6s ease both; }
     .mode-title {
       font-size: 22px; font-weight: 900; color: #ffde00; letter-spacing: 3px;
@@ -323,7 +318,6 @@
       border-radius: 8px; font-weight: 900;
     }
 
-    /* ==================== GLOBAL ROOM SCREEN ==================== */
     .global-room-screen {
       position: fixed; inset: 0; z-index: 85;
       background: radial-gradient(circle at center, var(--theme-c1) 0%, var(--theme-c2) 100%);
@@ -1139,7 +1133,6 @@
     }
     .lk-toast.show { opacity: 1; transform: translate(-50%, 0); }
 
-    /* ==================== FRIENDS SYSTEM ==================== */
     .friends-screen {
       position: fixed; inset: 0; z-index: 87;
       background: radial-gradient(circle at center, var(--theme-c1) 0%, var(--theme-c2) 100%);
@@ -1382,7 +1375,6 @@
       color: #fff; box-shadow: 0 3px 8px rgba(196,26,26,0.4);
     }
 
-    /* ==================== INBOX / CHAT SYSTEM ==================== */
     .inbox-screen {
       position: fixed; inset: 0; z-index: 88;
       background: radial-gradient(circle at center, var(--theme-c1) 0%, var(--theme-c2) 100%);
@@ -1626,7 +1618,6 @@
     .chat-send-btn:active { transform: scale(0.9); filter: brightness(1.15); }
     .chat-send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-    /* ==================== VS SCREEN ==================== */
     .vs-screen {
       position: fixed; inset: 0; z-index: 150;
       background: radial-gradient(circle at center, #1e3d75 0%, #050a14 75%);
@@ -2034,7 +2025,6 @@
     <div class="gr-list" id="gr-list"></div>
   </div>
 
-  <!-- ==================== FRIENDS SCREEN ==================== -->
   <div class="friends-screen hidden" id="friends-screen">
     <div class="fr-header">
       <button class="tb-btn tb-home" onclick="closeFriendsScreen()">
@@ -2074,7 +2064,6 @@
     </div>
   </div>
 
-  <!-- ==================== INBOX SCREEN ==================== -->
   <div class="inbox-screen hidden" id="inbox-screen">
     <div class="inbox-header">
       <button class="tb-btn tb-home" onclick="closeInboxScreen()">
@@ -2090,7 +2079,6 @@
     <div class="inbox-list" id="inbox-list"></div>
   </div>
 
-  <!-- ==================== CHAT SCREEN ==================== -->
   <div class="chat-screen hidden" id="chat-screen">
     <div class="chat-header">
       <button class="tb-btn tb-home" onclick="closeChatScreen()">
@@ -2506,6 +2494,28 @@
     let currentBetInfo = null;
     let gameActive = false;
     let amQuitter = false;
+
+    /* ============ ONLINE MULTIPLAYER STATE ============ */
+    let isOnlineMatch = false;
+    let onlineRoomCode = null;
+    let onlineMySeat = null;
+    let onlineGameRef = null;
+    let onlineGameState = null;
+    let onlineWinnerHandled = false;
+    let lastAppliedDiceSeq = 0;
+    let lastAppliedMoveSeq = 0;
+    let turnTickTimer = null;
+    const ONLINE_TURN_TIMEOUT_MS = 45000;
+
+    function saveActiveRoom(code) {
+      try { localStorage.setItem('ludoking_active_room', code); } catch(e){}
+    }
+    function clearActiveRoom() {
+      try { localStorage.removeItem('ludoking_active_room'); } catch(e){}
+    }
+    function isMyOnlineTurn() {
+      return isOnlineMatch && onlineGameState && onlineGameState.turn === onlineMySeat;
+    }
 
     function generateUID() {
       const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -3025,7 +3035,6 @@
       return generateRoomCode();
     }
 
-    /* ---------- ADMIN: Create private room ---------- */
     async function startBetMatch() {
       const amt = pendingBetAmount;
       const mode = pendingGameMode;
@@ -3067,7 +3076,6 @@
         return;
       }
 
-      // Deduct entry fee from admin
       profile.coins -= amt;
       LudoAuth.setBalance(profile.coins);
 
@@ -3079,7 +3087,6 @@
       showToast(`✅ রুম তৈরি! ${formatCoins(amt)} কয়েন কাটা হয়েছে।`);
     }
 
-    /* ---------- OPEN ROOM PANEL (with live listener) ---------- */
     function openRoomPanel(roomCode) {
       privateRoomCode = roomCode;
       privateRoomData = null;
@@ -3112,14 +3119,11 @@
         }
       });
 
-      // Auto-expire ticker
       if (privateRoomTick) clearInterval(privateRoomTick);
       privateRoomTick = setInterval(() => {
         if (!privateRoomData) return;
-        const t = document.getElementById('room-status');
         if (privateRoomData.expiresAt && Date.now() > privateRoomData.expiresAt) {
           if (privateRoomData.adminUid === profile.uid) {
-            // auto-cancel
             expireRoom(privateRoomData);
           }
         }
@@ -3210,7 +3214,6 @@
       }
     }
 
-    /* ---------- PRIMARY ACTION (Start if admin) ---------- */
     async function onRoomPrimaryAction() {
       if (!privateRoomData) return;
       if (privateRoomData.adminUid !== profile.uid) return;
@@ -3229,7 +3232,6 @@
       }
     }
 
-    /* ---------- LEAVE / CANCEL ---------- */
     async function leaveRoomPanel() {
       if (!privateRoomData) { closeRoomPanel(); return; }
       const room = privateRoomData;
@@ -3246,7 +3248,6 @@
 
       try {
         if (isAdmin) {
-          // Cancel entire room → refund all occupants
           const updates = {};
           Object.values(room.slots || {}).forEach(s => {
             if (s && s.uid) {
@@ -3257,12 +3258,10 @@
           });
           updates['rooms/' + roomCode] = null;
           await fbDB.ref().update(updates);
-          // Self refund — apply immediately
           profile.coins += amount;
           LudoAuth.setBalance(profile.coins);
           showToast(`রুম বাতিল। ${formatCoins(amount)} কয়েন ফেরত।`);
         } else {
-          // Just remove own slot
           const myColor = getMyColor(room);
           if (myColor) {
             await fbDB.ref('rooms/' + roomCode + '/slots/' + myColor).set(null);
@@ -3280,7 +3279,6 @@
     }
 
     async function expireRoom(room) {
-      // Admin-side auto cancel on timeout
       const roomCode = room.roomCode;
       const amount = room.amount;
       try {
@@ -3297,7 +3295,6 @@
       } catch (e) {}
     }
 
-    /* ---------- COPY / SHARE ROOM ---------- */
     function copyRoomCode() {
       if (!privateRoomData) return;
       const code = privateRoomData.roomCode;
@@ -3332,7 +3329,6 @@
       } else fallbackCopy(fullMsg, () => showToast('রুম লিংক কপি হয়েছে!'));
     }
 
-    /* ---------- TRIGGER GAME START FOR EVERYONE ---------- */
     function triggerRoomStart(room) {
       const activeColors = getActiveColors(room.mode);
       const vsPlayers = activeColors.map(color => {
@@ -3364,12 +3360,18 @@
       }
 
       const mode = room.mode;
+      const slotsForStart = JSON.parse(JSON.stringify(room.slots || {}));
+      const roomCodeForStart = room.roomCode;
       privateRoomData = null;
       privateRoomCode = null;
       privateRoomStarted = false;
       vibrate([40, 25, 40, 25, 80]);
       showVSScreen(vsPlayers, mode, () => {
-        startGame(mode, isBetMatch);
+        startGame(mode, isBetMatch, {
+          mode: mode,
+          slots: slotsForStart,
+          roomCode: roomCodeForStart
+        });
       });
     }
 
@@ -3521,7 +3523,6 @@
       return card;
     }
 
-    /* ---------- JOIN ROOM (transaction based, slot-aware) ---------- */
     async function attemptJoinRoom(room) {
       if (!room || room.status !== 'waiting') { showToast('এই রুম আর খোলা নেই'); return; }
       if (!fbReady) { showToast('⚠️ Firebase নেই'); return; }
@@ -3539,12 +3540,10 @@
           if (current.started) return current;
           if (!current.slots) current.slots = { blue: null, red: null, green: null, yellow: null };
 
-          // Duplicate check
           for (const c of ['blue','red','green','yellow']) {
-            if (current.slots[c] && current.slots[c].uid === profile.uid) return current; // already in
+            if (current.slots[c] && current.slots[c].uid === profile.uid) return current;
           }
 
-          // Find next empty active slot
           const activeColors = current.mode === '1v1' ? ['blue','green'] : ['blue','red','green','yellow'];
           let filled = activeColors.filter(c => current.slots[c] && current.slots[c].uid).length;
           if (filled >= activeColors.length) return current;
@@ -3556,7 +3555,6 @@
             }
           }
 
-          // Re-count
           const nowFilled = activeColors.filter(c => current.slots[c] && current.slots[c].uid).length;
           if (nowFilled >= activeColors.length) current.status = 'full';
           return current;
@@ -3578,7 +3576,6 @@
       vibrate(30);
       showToast(`✅ জয়েন সম্পন্ন! ${formatCoins(updated.amount)} কয়েন কাটা হয়েছে।`);
 
-      // Close global list & open room panel
       document.getElementById('global-room-screen').classList.add('hidden');
       detachRoomsListener();
       if (roomTickInterval) { clearInterval(roomTickInterval); roomTickInterval = null; }
@@ -3822,11 +3819,16 @@
     function doExitGame() {
       closeExitConfirm();
       if (gameActive && currentBetInfo) handleInGameQuit();
-      if (privateRoomData) {
-        // Trigger leave via async but don't block
-        const room = privateRoomData;
-        leaveRoomPanel();
-      }
+      if (privateRoomData) { leaveRoomPanel(); }
+
+      detachOnlineGameListeners();
+      isOnlineMatch = false;
+      onlineRoomCode = null;
+      onlineMySeat = null;
+      onlineGameState = null;
+      onlineWinnerHandled = false;
+      clearActiveRoom();
+
       document.getElementById('game-wrapper').classList.remove('visible');
       document.getElementById('bet-badge').classList.remove('show');
       document.getElementById('global-room-screen').classList.add('hidden');
@@ -4196,12 +4198,23 @@
 
     function updateTurnUI() {
       ALL_PLAYERS.forEach(color => {
-        document.getElementById(`card-${color}`).classList.remove('card-active');
+        const card = document.getElementById(`card-${color}`);
+        if (card) card.classList.remove('card-active');
       });
       const activeColor = activePlayers[turnIndex];
-      document.getElementById(`card-${activeColor}`).classList.add('card-active');
-      document.getElementById('status-text').innerText =
-        `${activeColor.toUpperCase()}-এর চাল! ডায়াইসে চাপ দিন।`;
+      if (!activeColor) return;
+      const card = document.getElementById(`card-${activeColor}`);
+      if (card) card.classList.add('card-active');
+
+      if (isOnlineMatch) {
+        const isMyTurn = (activeColor === onlineMySeat);
+        document.getElementById('status-text').innerText = isMyTurn
+          ? `🎲 আপনার চাল! ডায়াইসে চাপ দিন।`
+          : `⏳ ${activeColor.toUpperCase()}-এর চাল...`;
+      } else {
+        document.getElementById('status-text').innerText =
+          `${activeColor.toUpperCase()}-এর চাল! ডায়াইসে চাপ দিন।`;
+      }
     }
     function nextTurn() {
       consecutiveSixes = 0;
@@ -4210,6 +4223,15 @@
       updateTurnUI();
     }
     function rollDice() {
+      if (isOnlineMatch) {
+        if (!isMyOnlineTurn()) { showToast('⏳ এখন আপনার চাল না'); return; }
+        if (onlineGameState.turnState !== 'rolling') { return; }
+        getAudioCtx();
+        const value = Math.floor(Math.random() * 6) + 1;
+        writeOnlineDiceRoll(value);
+        return;
+      }
+
       if (!canRoll) return;
       getAudioCtx();
       playDiceRollSound();
@@ -4242,9 +4264,15 @@
         if (pawn.step === -1 && diceValue === 6) activePawnsToMove.push(pawn);
         else if (pawn.step >= 0 && pawn.step + diceValue <= 56) activePawnsToMove.push(pawn);
       });
+
       if (activePawnsToMove.length === 0) {
-        document.getElementById('status-text').innerText = `কোন চাল সম্ভব নয়! চাল পাস হচ্ছে...`;
-        setTimeout(nextTurn, 1200);
+        if (isOnlineMatch) {
+          document.getElementById('status-text').innerText = `কোন চাল সম্ভব নয়! টার্ন পাস হচ্ছে...`;
+          setTimeout(() => writeOnlineSkipTurn(), 1200);
+        } else {
+          document.getElementById('status-text').innerText = `কোন চাল সম্ভব নয়! চাল পাস হচ্ছে...`;
+          setTimeout(nextTurn, 1200);
+        }
       } else if (activePawnsToMove.length === 1) {
         highlightPawns(true);
         setTimeout(() => { onPawnClick(activePawnsToMove[0]); }, 400);
@@ -4291,6 +4319,20 @@
     }
     function onPawnClick(pawn) {
       if (!activePawnsToMove.includes(pawn)) return;
+
+      if (isOnlineMatch) {
+        if (!isMyOnlineTurn()) return;
+        if (onlineGameState.turnState !== 'moving') return;
+        const fromStep = pawn.step;
+        const toStep = pawn.step === -1 ? 0 : pawn.step + diceValue;
+        const move = computeOnlineMoveResult(pawn.color, pawn.index, fromStep, toStep, diceValue);
+        highlightPawns(false);
+        activePawnsToMove = [];
+        document.getElementById('status-text').innerText = `চাল পাঠানো হচ্ছে...`;
+        writeOnlineMove(move);
+        return;
+      }
+
       highlightPawns(false);
       activePawnsToMove = [];
       const fromStep = pawn.step;
@@ -4344,12 +4386,16 @@
       } else nextTurn();
     }
     function handleMatchWin(winnerColor) {
-      const isPlayerWin = (winnerColor === 'blue');
+      const isPlayerWin = isOnlineMatch
+        ? (winnerColor === onlineMySeat)
+        : (winnerColor === 'blue');
+
       document.getElementById('status-text').innerText =
         `🎉 ${winnerColor.toUpperCase()} বিজয়ী হয়েছে! 🎉`;
       canRoll = false;
       playWinSound();
       gameActive = false;
+
       if (currentBetInfo) {
         const prize = currentBetInfo.prize;
         const entry = currentBetInfo.amount;
@@ -4368,33 +4414,425 @@
         showToast('🏆 অভিনন্দন! আপনি জিতেছেন!');
       }
       LudoAuth.recordMatch(isPlayerWin);
+      if (isOnlineMatch) clearActiveRoom();
     }
     function checkWin(color) {
       return pawns.filter(p => p.color === color && p.step === 56).length === 4;
     }
 
-    function startGame(mode, isBetMatch, roomPlayers) {
-      if (mode === '1v1') activePlayers = ['blue', 'green'];
-      else activePlayers = ['blue', 'red', 'green', 'yellow'];
+    /* ============================================================
+       ============  ONLINE MULTIPLAYER SYNC  ====================
+       ============================================================ */
+
+    async function initializeOnlineGameState(roomSnapshot) {
+      if (!fbReady || !onlineRoomCode) return;
+      const gameRef = fbDB.ref('rooms/' + onlineRoomCode + '/game');
+      const colors = getActiveColors(roomSnapshot.mode);
+      const initialPawns = {};
+      colors.forEach(c => { initialPawns[c] = [-1, -1, -1, -1]; });
+
+      try {
+        await gameRef.transaction(current => {
+          if (current) return current;
+          return {
+            turn: colors[0],
+            turnState: 'rolling',
+            turnStartedAt: Date.now(),
+            dice: { value: 0, seq: 0, bySeat: null, at: 0 },
+            lastMove: { seq: 0 },
+            consecutiveSixes: 0,
+            pawns: initialPawns,
+            winner: null,
+            createdAt: Date.now()
+          };
+        });
+        const snap = await gameRef.get();
+        if (snap.exists()) {
+          applyFullOnlineState(snap.val());
+        }
+      } catch (e) { console.warn('Init online game failed', e); }
+    }
+
+    function applyFullOnlineState(game) {
+      if (!game) return;
+      if (game.pawns) {
+        for (const color of Object.keys(game.pawns)) {
+          const steps = game.pawns[color] || [];
+          pawns.filter(p => p.color === color).forEach((p, i) => {
+            if (typeof steps[i] === 'number') {
+              p.step = steps[i];
+              renderPawn(p);
+            }
+          });
+        }
+      }
+      if (game.turn) {
+        const idx = activePlayers.indexOf(game.turn);
+        if (idx >= 0) turnIndex = idx;
+        canRoll = (game.turn === onlineMySeat) && game.turnState === 'rolling';
+        updateTurnUI();
+      }
+      if (game.dice) lastAppliedDiceSeq = game.dice.seq || 0;
+      if (game.lastMove) lastAppliedMoveSeq = game.lastMove.seq || 0;
+      if (game.winner && !onlineWinnerHandled) {
+        onlineWinnerHandled = true;
+        handleMatchWin(game.winner);
+      }
+    }
+
+    function attachOnlineGameListeners() {
+      if (!fbReady || !onlineRoomCode) return;
+      if (onlineGameRef) { try { onlineGameRef.off(); } catch(e){} }
+      onlineGameRef = fbDB.ref('rooms/' + onlineRoomCode + '/game');
+      onlineGameRef.on('value', (snap) => {
+        const game = snap.val();
+        if (!game) return;
+        onlineGameState = game;
+        handleOnlineGameUpdate(game);
+      });
+      if (turnTickTimer) clearInterval(turnTickTimer);
+      turnTickTimer = setInterval(checkOnlineTurnTimeout, 5000);
+    }
+
+    function detachOnlineGameListeners() {
+      if (onlineGameRef) { try { onlineGameRef.off(); } catch(e){} onlineGameRef = null; }
+      if (turnTickTimer) { clearInterval(turnTickTimer); turnTickTimer = null; }
+    }
+
+    function handleOnlineGameUpdate(game) {
+      if (game.winner) {
+        if (!onlineWinnerHandled) {
+          onlineWinnerHandled = true;
+          if (game.pawns) {
+            for (const color of Object.keys(game.pawns)) {
+              const steps = game.pawns[color] || [];
+              pawns.filter(p => p.color === color).forEach((p, i) => {
+                if (typeof steps[i] === 'number') { p.step = steps[i]; renderPawn(p); }
+              });
+            }
+          }
+          handleMatchWin(game.winner);
+        }
+        return;
+      }
+
+      if (game.dice && (game.dice.seq || 0) > lastAppliedDiceSeq) {
+        lastAppliedDiceSeq = game.dice.seq;
+        applyOnlineDice(game.dice);
+      }
+
+      if (game.lastMove && (game.lastMove.seq || 0) > lastAppliedMoveSeq) {
+        lastAppliedMoveSeq = game.lastMove.seq;
+        applyOnlineMove(game.lastMove);
+      }
+
+      if (game.turn) {
+        const newIdx = activePlayers.indexOf(game.turn);
+        if (newIdx >= 0 && newIdx !== turnIndex) {
+          turnIndex = newIdx;
+          updateTurnUI();
+        } else if (newIdx >= 0) {
+          updateTurnUI();
+        }
+        canRoll = (game.turn === onlineMySeat) && game.turnState === 'rolling';
+      }
+    }
+
+    function applyOnlineDice(dice) {
+      const diceFaces = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
+      const diceElem = document.getElementById(`dice-${dice.bySeat}`);
+      if (!diceElem) return;
+      playDiceRollSound();
+      diceElem.classList.add('rolling');
+      setTimeout(() => {
+        diceElem.classList.remove('rolling');
+        diceElem.innerText = diceFaces[(dice.value || 1) - 1];
+        diceValue = dice.value;
+        if (dice.value === 6) playSixSound();
+        if (dice.bySeat === onlineMySeat) {
+          evaluateMoves();
+        } else {
+          const label = (dice.bySeat || '').toUpperCase();
+          document.getElementById('status-text').innerText = `${label} ডাইস চালালেন (${dice.value})`;
+        }
+      }, 400);
+    }
+
+    function applyOnlineMove(move) {
+      const pawn = pawns.find(p => p.color === move.seat && p.index === move.pawnIndex);
+      if (!pawn) return;
+      if (pawn.step !== move.fromStep) {
+        pawn.step = move.fromStep;
+        renderPawn(pawn);
+      }
+      animatePawnMove(pawn, move.fromStep, move.toStep, () => {
+        if (move.capture) {
+          const victim = pawns.find(p => p.color === move.capture.seat && p.index === move.capture.pawnIndex);
+          if (victim) {
+            victim.step = -1;
+            renderPawn(victim);
+            playCaptureSound();
+          }
+        }
+      });
+    }
+
+    function writeOnlineDiceRoll(value) {
+      if (!fbReady || !onlineRoomCode) return;
+      const gameRef = fbDB.ref('rooms/' + onlineRoomCode + '/game');
+      gameRef.transaction(current => {
+        if (!current) return current;
+        if (current.winner) return current;
+        if (current.turn !== onlineMySeat) return current;
+        if (current.turnState !== 'rolling') return current;
+
+        const newSeq = ((current.dice && current.dice.seq) || 0) + 1;
+        current.dice = { value: value, seq: newSeq, bySeat: onlineMySeat, at: Date.now() };
+
+        if (value === 6) {
+          current.consecutiveSixes = (current.consecutiveSixes || 0) + 1;
+          if (current.consecutiveSixes >= 3) {
+            current.consecutiveSixes = 0;
+            const idx = activePlayers.indexOf(current.turn);
+            const nextIdx = (idx + 1) % activePlayers.length;
+            current.turn = activePlayers[nextIdx];
+            current.turnState = 'rolling';
+            current.turnStartedAt = Date.now();
+            current.turnSeq = ((current.turnSeq || 0) + 1);
+            return current;
+          }
+        } else {
+          current.consecutiveSixes = 0;
+        }
+
+        current.turnState = 'moving';
+        return current;
+      }).catch(e => console.warn('writeOnlineDiceRoll failed', e));
+    }
+
+    function computeOnlineMoveResult(seat, pawnIndex, fromStep, toStep, dice) {
+      let capture = null;
+      if (toStep >= 0 && toStep < 51) {
+        const pathIdx = (playerConfigs[seat].startIndex + toStep) % 52;
+        if (!safeIndices.includes(pathIdx)) {
+          for (const otherPawn of pawns) {
+            if (otherPawn.color === seat) continue;
+            if (otherPawn.step < 0 || otherPawn.step >= 51) continue;
+            const otherIdx = (playerConfigs[otherPawn.color].startIndex + otherPawn.step) % 52;
+            if (otherIdx === pathIdx) {
+              capture = { seat: otherPawn.color, pawnIndex: otherPawn.index };
+              break;
+            }
+          }
+        }
+      }
+      const keepTurn = (dice === 6 || !!capture);
+      let nextTurn = seat;
+      if (!keepTurn) {
+        const idx = activePlayers.indexOf(seat);
+        nextTurn = activePlayers[(idx + 1) % activePlayers.length];
+      }
+      return {
+        seq: 0,
+        seat, pawnIndex, fromStep, toStep,
+        dice: dice,
+        capture: capture,
+        nextTurn: nextTurn,
+        keepTurn: keepTurn,
+        at: Date.now()
+      };
+    }
+
+    function writeOnlineMove(move) {
+      if (!fbReady || !onlineRoomCode) return;
+      const gameRef = fbDB.ref('rooms/' + onlineRoomCode + '/game');
+      gameRef.transaction(current => {
+        if (!current) return current;
+        if (current.winner) return current;
+        if (current.turn !== move.seat) return current;
+        if (current.turnState !== 'moving') return current;
+
+        const newSeq = ((current.lastMove && current.lastMove.seq) || 0) + 1;
+        const moveCopy = JSON.parse(JSON.stringify(move));
+        moveCopy.seq = newSeq;
+        current.lastMove = moveCopy;
+
+        if (!current.pawns) current.pawns = {};
+        if (!current.pawns[move.seat]) current.pawns[move.seat] = [-1, -1, -1, -1];
+        current.pawns[move.seat][move.pawnIndex] = move.toStep;
+
+        if (move.capture) {
+          if (!current.pawns[move.capture.seat]) current.pawns[move.capture.seat] = [-1, -1, -1, -1];
+          current.pawns[move.capture.seat][move.capture.pawnIndex] = -1;
+        }
+
+        current.turn = move.nextTurn;
+        current.turnState = 'rolling';
+        current.turnStartedAt = Date.now();
+        current.turnSeq = ((current.turnSeq || 0) + 1);
+
+        const myPawns = current.pawns[move.seat] || [];
+        if (myPawns.length === 4 && myPawns.every(s => s === 56)) {
+          current.winner = move.seat;
+          current.winnerAt = Date.now();
+        }
+        return current;
+      }).catch(e => console.warn('writeOnlineMove failed', e));
+    }
+
+    function writeOnlineSkipTurn() {
+      if (!fbReady || !onlineRoomCode) return;
+      const gameRef = fbDB.ref('rooms/' + onlineRoomCode + '/game');
+      gameRef.transaction(current => {
+        if (!current) return current;
+        if (current.winner) return current;
+        if (current.turn !== onlineMySeat) return current;
+        if (current.turnState !== 'moving') return current;
+        const idx = activePlayers.indexOf(current.turn);
+        const nextIdx = (idx + 1) % activePlayers.length;
+        current.turn = activePlayers[nextIdx];
+        current.turnState = 'rolling';
+        current.turnStartedAt = Date.now();
+        current.consecutiveSixes = 0;
+        current.turnSeq = ((current.turnSeq || 0) + 1);
+        return current;
+      }).catch(e => console.warn('writeOnlineSkipTurn failed', e));
+    }
+
+    function checkOnlineTurnTimeout() {
+      if (!isOnlineMatch || !onlineRoomCode || !onlineGameState) return;
+      if (onlineGameState.winner) return;
+      const elapsed = Date.now() - (onlineGameState.turnStartedAt || 0);
+      if (elapsed < ONLINE_TURN_TIMEOUT_MS) return;
+      const gameRef = fbDB.ref('rooms/' + onlineRoomCode + '/game');
+      gameRef.transaction(current => {
+        if (!current || current.winner) return current;
+        const elapsedNow = Date.now() - (current.turnStartedAt || 0);
+        if (elapsedNow < ONLINE_TURN_TIMEOUT_MS) return current;
+        const idx = activePlayers.indexOf(current.turn);
+        if (idx < 0) return current;
+        const nextIdx = (idx + 1) % activePlayers.length;
+        current.turn = activePlayers[nextIdx];
+        current.turnState = 'rolling';
+        current.turnStartedAt = Date.now();
+        current.consecutiveSixes = 0;
+        current.turnSeq = ((current.turnSeq || 0) + 1);
+        return current;
+      }).catch(()=>{});
+    }
+
+    async function tryRestoreActiveRoom() {
+      let code = null;
+      try { code = localStorage.getItem('ludoking_active_room'); } catch(e){}
+      if (!code || !fbReady) return false;
+      try {
+        const snap = await fbDB.ref('rooms/' + code).get();
+        if (!snap.exists()) { clearActiveRoom(); return false; }
+        const room = snap.val();
+        if (!room.started || !room.game) { clearActiveRoom(); return false; }
+        let mySeat = null;
+        for (const c of ['blue','red','green','yellow']) {
+          if (room.slots && room.slots[c] && room.slots[c].uid === profile.uid) { mySeat = c; break; }
+        }
+        if (!mySeat) { clearActiveRoom(); return false; }
+        const isBetMatch = (room.amount || 0) > 0;
+        currentBetInfo = {
+          amount: room.amount, players: room.players,
+          pool: room.pool, fee: room.fee, prize: room.prize
+        };
+        if (isBetMatch) {
+          document.getElementById('bet-badge-text').innerText =
+            `এন্ট্রি: ${formatCoins(room.amount)} · প্রাইজ: ${formatCoins(room.prize)}`;
+          document.getElementById('bet-badge').classList.add('show');
+        }
+        document.getElementById('splash').classList.add('hidden');
+        document.getElementById('mode-screen').classList.add('hidden');
+        document.getElementById('game-wrapper').classList.add('visible');
+        startGame(room.mode, isBetMatch, { mode: room.mode, slots: room.slots, roomCode: code });
+        return true;
+      } catch (e) {
+        console.warn('Restore failed', e);
+        return false;
+      }
+    }
+
+    function startGame(mode, isBetMatch, roomSnapshot) {
+      const isOnline = !!(roomSnapshot && roomSnapshot.roomCode && roomSnapshot.slots);
+
+      if (isOnline) {
+        isOnlineMatch = true;
+        onlineRoomCode = roomSnapshot.roomCode;
+        onlineMySeat = null;
+        onlineGameState = null;
+        onlineWinnerHandled = false;
+        lastAppliedDiceSeq = 0;
+        lastAppliedMoveSeq = 0;
+
+        const colors = getActiveColors(mode);
+        for (const c of colors) {
+          if (roomSnapshot.slots[c] && roomSnapshot.slots[c].uid === profile.uid) {
+            onlineMySeat = c; break;
+          }
+        }
+        activePlayers = colors.filter(c => roomSnapshot.slots[c] && roomSnapshot.slots[c].uid);
+        if (activePlayers.length === 0) activePlayers = colors;
+        saveActiveRoom(onlineRoomCode);
+      } else {
+        isOnlineMatch = false;
+        if (mode === '1v1') activePlayers = ['blue', 'green'];
+        else activePlayers = ['blue', 'red', 'green', 'yellow'];
+      }
+
       ALL_PLAYERS.forEach(color => {
         const card = document.getElementById(`card-${color}`);
-        card.style.display = activePlayers.includes(color) ? '' : 'none';
+        if (card) card.style.display = activePlayers.includes(color) ? '' : 'none';
       });
-      applyProfileToGameCard();
+
+      if (isOnline) {
+        activePlayers.forEach(color => {
+          const slot = roomSnapshot.slots[color];
+          if (!slot) return;
+          const av = document.getElementById(`avatar-${color}`);
+          const nm = document.getElementById(`name-${color}`);
+          const cn = document.getElementById(`coins-${color}`);
+          const isMe = slot.uid === profile.uid;
+          if (av) av.innerText = slot.avatar || '👤';
+          if (nm) nm.innerText = isMe ? profile.name : (slot.name || 'Player');
+          if (cn) cn.innerText = isMe ? ('🪙 ' + formatCoins(profile.coins)) : '🪙 —';
+        });
+      } else {
+        applyProfileToGameCard();
+      }
+
+      pawns.forEach(p => {
+        p.step = -1;
+        p.element.classList.remove('highlight', 'jumping');
+        renderPawn(p);
+      });
+
       const t = document.getElementById('tb-title');
       if (t) {
         const modeLabel = mode === '1v1' ? '1 vs 1' : '4 PLAYER';
         t.innerText = isBetMatch ? `${modeLabel} · 💰 কয়েন এন্ট্রি` : `${modeLabel} MATCH`;
       }
+
       document.getElementById('mode-screen').classList.add('hidden');
       document.getElementById('global-room-screen').classList.add('hidden');
       document.getElementById('game-wrapper').classList.add('visible');
+
       turnIndex = 0;
       canRoll = true;
       consecutiveSixes = 0;
       gameActive = true;
       amQuitter = false;
-      updateTurnUI();
+
+      if (isOnline) {
+        initializeOnlineGameState(roomSnapshot).then(() => {
+          attachOnlineGameListeners();
+        });
+      } else {
+        updateTurnUI();
+      }
     }
 
     /* ============================================================
@@ -4602,7 +5040,6 @@
 
       syncCurrentUserToDB();
 
-      // LK-XXXXXX style room code (LK- prefix + 6 chars) → try as room
       let roomCodeToTry = null;
       if (/^LK-[A-Z0-9]{6}$/.test(q)) roomCodeToTry = q.slice(3);
       else if (/^R-[A-Z0-9]{6}$/.test(q)) roomCodeToTry = q.slice(2);
@@ -4624,7 +5061,6 @@
             vibrate(15);
             return;
           } else {
-            // If it looked like a room code but nothing found, fall through to UID search if prefixed LK-
             if (!q.startsWith('LK-')) {
               frSearchResult = { found: false, query: roomCodeToTry, isRoom: true };
               renderFriendsScreen();
@@ -4640,19 +5076,16 @@
         }
       }
 
-      // Auto-fix common prefixes for UID
       if (!q.startsWith('LK-')) {
         if (/^[A-Z0-9]{8}$/.test(q)) q = 'LK-' + q;
       }
 
-      // Self
       if (q === profile.uid) {
         frSearchResult = { found: true, self: true, user: usersDB[profile.uid] };
         renderFriendsScreen();
         return;
       }
 
-      // Mock/bot user
       if (usersDB[q] && usersDB[q].isMock) {
         frSearchResult = { found: true, user: usersDB[q] };
         renderFriendsScreen();
@@ -5530,6 +5963,9 @@
           }
         }
       }, 9000);
+
+      // আগের চলমান online ম্যাচ থাকলে restore করার চেষ্টা
+      setTimeout(() => { tryRestoreActiveRoom(); }, 800);
 
       if (LudoAuth.currentUser) LudoAuth.setUser(LudoAuth.currentUser);
     });
