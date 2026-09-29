@@ -3424,6 +3424,7 @@
         slots,
         started: false,
         status: 'waiting',
+        isPrivate: true,   /* ⭐ কয়েন ম্যাচ = প্রাইভেট রুম (লাইভ লিস্টে দেখাবে না) */
         createdAt: Date.now(),
         expiresAt: Date.now() + ROOM_EXPIRE_MS
       };
@@ -3443,7 +3444,7 @@
       pendingBetAmount = 0;
 
       openRoomPanel(roomCode);
-      showToast(`✅ রুম তৈরি! ${formatCoins(amt)} কয়েন কাটা হয়েছে।`);
+      showToast(`✅ প্রাইভেট রুম তৈরি! ${formatCoins(amt)} কয়েন কাটা হয়েছে।`);
     }
 
     function openRoomPanel(roomCode) {
@@ -3832,6 +3833,8 @@
         const data = snap.val() || {};
         const now = Date.now();
         const all = Object.values(data);
+        /* সব waiting রুম রাখি (isUserInAnyRoom-এর জন্য দরকার),
+           কিন্তু render-এর সময় প্রাইভেট রুম বাদ দেব */
         globalRooms = all.filter(r => r.status === 'waiting' && (!r.expiresAt || r.expiresAt > now));
         renderGlobalRooms();
       });
@@ -3887,9 +3890,10 @@
     function renderGlobalRooms() {
       const list = document.getElementById('gr-list');
       list.innerHTML = '';
-      const active = globalRooms.filter(r => r.status === 'waiting');
+      /* ⭐ প্রাইভেট রুম (isPrivate:true) লাইভ লিস্টে দেখাবো না */
+      const active = globalRooms.filter(r => r.status === 'waiting' && !r.isPrivate);
       if (active.length === 0) {
-        list.innerHTML = '<div class="gr-empty">🌐 এই মুহূর্তে কোনো খোলা রুম নেই।<br>➕ উপরের বাটনে চাপ দিয়ে নতুন রুম তৈরি করুন!</div>';
+        list.innerHTML = '<div class="gr-empty">🌐 এই মুহূর্তে কোনো খোলা পাবলিক রুম নেই।<br>➕ উপরের বাটনে চাপ দিয়ে নতুন রুম তৈরি করুন!</div>';
         return;
       }
       active.forEach(room => list.appendChild(buildRoomCard(room)));
@@ -4126,6 +4130,7 @@
         slots,
         started: false,
         status: 'waiting',
+        isPrivate: false,   /* ⭐ পাবলিক রুম (লাইভ লিস্টে দেখাবে) */
         createdAt: Date.now(),
         expiresAt: Date.now() + ROOM_EXPIRE_MS
       };
@@ -4137,7 +4142,7 @@
       profile.coins -= amt;
       LudoAuth.setBalance(profile.coins);
       closeCreateRoom();
-      showToast(`✅ রুম তৈরি! ${formatCoins(amt)} কয়েন কাটা হয়েছে।`);
+      showToast(`✅ পাবলিক রুম তৈরি! ${formatCoins(amt)} কয়েন কাটা হয়েছে।`);
 
       document.getElementById('global-room-screen').classList.add('hidden');
       detachRoomsListener();
@@ -6579,7 +6584,6 @@
       const el = document.getElementById('room-minimized-indicator');
       if (!el) return;
 
-      // inline onclick সরিয়ে দিই, নিজে tap-vs-drag হ্যান্ডেল করব
       el.onclick = null;
       el.style.touchAction = 'none';
       el.style.cursor = 'grab';
@@ -6589,23 +6593,21 @@
       let moved = false;
       let startX = 0, startY = 0;
       let startLeft = 0, startTop = 0;
-      const DRAG_THRESHOLD = 6; // pixels — এর কম সরলে ট্যাপ ধরা হবে
+      const DRAG_THRESHOLD = 6;
 
-      // আগের সেভ করা পজিশন থাকলে apply করি
       function applySavedPos() {
         try {
           const raw = localStorage.getItem(RMI_POS_KEY);
           if (!raw) return;
           const pos = JSON.parse(raw);
           if (typeof pos.left !== 'number' || typeof pos.top !== 'number') return;
-          // viewport এর ভিতরে clamp করে নিই
           const w = el.offsetWidth || 120;
           const h = el.offsetHeight || 40;
           const maxLeft = Math.max(0, window.innerWidth - w);
           const maxTop = Math.max(0, window.innerHeight - h);
           const left = Math.max(0, Math.min(maxLeft, pos.left));
           const top = Math.max(0, Math.min(maxTop, pos.top));
-          el.style.animation = 'none'; // floating বন্ধ — fixed pos
+          el.style.animation = 'none';
           el.style.left = left + 'px';
           el.style.top = top + 'px';
           el.style.right = 'auto';
@@ -6614,7 +6616,6 @@
       }
       applySavedPos();
 
-      // viewport resize হলে clamp করি
       window.addEventListener('resize', () => {
         if (el.classList.contains('hidden')) return;
         if (el.style.left && el.style.top) {
@@ -6645,7 +6646,6 @@
         startLeft = rect.left;
         startTop = rect.top;
 
-        // drag শুরু — floating animation বন্ধ করে fixed pos এ নিয়ে আসি
         el.style.animation = 'none';
         el.style.transition = 'none';
         el.style.left = startLeft + 'px';
@@ -6656,7 +6656,6 @@
 
         try { el.setPointerCapture(pointerId); } catch (_) {}
 
-        // browser এর default drag/scroll/select আটকাই
         e.preventDefault();
       }
 
@@ -6701,10 +6700,8 @@
         el.classList.remove('dragging');
 
         if (wasTap) {
-          // ট্যাপ → রুম প্যানেল রিস্টোর
           try { restoreRoomPanel(); } catch (_) {}
         } else {
-          // নতুন পজিশন সেভ
           try {
             const rect = el.getBoundingClientRect();
             localStorage.setItem(RMI_POS_KEY, JSON.stringify({
@@ -6718,7 +6715,6 @@
       el.addEventListener('pointermove', onMove, { passive: false });
       el.addEventListener('pointerup', onUp);
       el.addEventListener('pointercancel', onUp);
-      // contextmenu (long press) ব্লক — মোবাইলে long press এ popup আসা আটকায়
       el.addEventListener('contextmenu', (e) => e.preventDefault());
     })();
 
