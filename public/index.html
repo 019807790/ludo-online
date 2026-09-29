@@ -575,7 +575,6 @@
     }
     .game-wrapper.visible { opacity: 1; }
 
-    /* ===== GAME TOOLS (message + emoji buttons above board) ===== */
     .game-tools {
       position: absolute;
       top: 6px; left: 0; right: 0;
@@ -712,7 +711,6 @@
     .tri-bottom { border-width: 0 calc(var(--board-size) * 1.5 / 15) calc(var(--board-size) * 1.5 / 15) calc(var(--board-size) * 1.5 / 15); border-color: transparent transparent #d9a800 transparent; bottom: 0; left: 0; }
     .tri-left { border-width: calc(var(--board-size) * 1.5 / 15) 0 calc(var(--board-size) * 1.5 / 15) calc(var(--board-size) * 1.5 / 15); border-color: transparent transparent transparent #0059c9; top: 0; left: 0; }
 
-    /* ===== HOME SPOTS (step 56 - inside center area) ===== */
     .home-spot {
       position: absolute;
       width: 22%; height: 22%;
@@ -1213,7 +1211,6 @@
     .room-player-slot.ready .rps-badge { background: linear-gradient(180deg, #ffde00, #d99a00); color: #1a1a1a; box-shadow: 0 0 10px rgba(255,222,0,0.5); }
     .rps-badge.admin { background: linear-gradient(180deg, #ffde00, #d99a00); color: #1a1a1a; }
 
-    /* ===== KICK BUTTON ===== */
     .rps-kick-btn {
       background: linear-gradient(180deg, #c41a1a, #7a0000);
       color: #fff;
@@ -1242,6 +1239,64 @@
     }
     .room-status .rs-dot { display: inline-block; width: 6px; height: 6px; background: #ffde00; border-radius: 50%; margin-right: 6px; animation: dotBlink 1s ease-in-out infinite; }
     @keyframes dotBlink { 0%,100%{opacity:0.3;} 50%{opacity:1;} }
+
+    /* ===== ROOM MINIMIZE ===== */
+    .room-minimize-btn {
+      position: absolute; top: 12px; right: 12px;
+      width: 34px; height: 34px; border-radius: 50%;
+      background: linear-gradient(180deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+      border: 1.5px solid rgba(255,204,0,0.6);
+      color: #ffde00;
+      font-size: 20px; font-weight: 900; line-height: 1;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+      -webkit-tap-highlight-color: transparent;
+      z-index: 5;
+      font-family: Arial, sans-serif;
+      padding-bottom: 8px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.6), 0 0 12px rgba(255,204,0,0.35);
+    }
+    .room-minimize-btn:active { transform: scale(0.88); background: rgba(255,204,0,0.3); }
+
+    .room-minimized-indicator {
+      position: fixed;
+      bottom: 18px; right: 18px;
+      z-index: 126;
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 16px 10px 14px;
+      background: linear-gradient(135deg, rgba(30,61,117,0.98), rgba(5,10,20,0.98));
+      border: 2px solid var(--theme-accent);
+      border-radius: 50px;
+      color: #ffde00; font-weight: 900; font-size: 12px;
+      letter-spacing: 1.2px; font-family: 'Courier New', monospace;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.85), 0 0 20px rgba(255,204,0,0.55);
+      cursor: grab;
+      transition: transform 0.2s ease, filter 0.2s ease;
+      animation: rmiFloat 2s ease-in-out infinite alternate;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+    }
+    .room-minimized-indicator.hidden { display: none !important; }
+    .room-minimized-indicator.dragging { cursor: grabbing; filter: brightness(1.15); }
+    .room-minimized-indicator:active { filter: brightness(1.15); }
+    .room-minimized-indicator .rmi-icon { font-size: 15px; line-height: 1; }
+    .room-minimized-indicator .rmi-pulse {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #7cffb0;
+      box-shadow: 0 0 8px rgba(124,255,176,0.9);
+      animation: rmiPulse 1.2s ease-in-out infinite alternate;
+    }
+    @keyframes rmiFloat {
+      0% { transform: translateY(0); box-shadow: 0 8px 24px rgba(0,0,0,0.85), 0 0 14px rgba(255,204,0,0.4); }
+      100% { transform: translateY(-4px); box-shadow: 0 10px 28px rgba(0,0,0,0.9), 0 0 26px rgba(255,204,0,0.85); }
+    }
+    @keyframes rmiPulse {
+      0% { opacity: 0.4; transform: scale(0.85); }
+      100% { opacity: 1; transform: scale(1.15); }
+    }
 
     .lk-toast {
       position: fixed; left: 50%; bottom: 34px;
@@ -1619,7 +1674,6 @@
       font-family: Arial, sans-serif;
     }
 
-    /* ===== BLOCK/UNBLOCK BUTTON ===== */
     .chat-block-btn {
       padding: 8px 12px;
       border-radius: 10px;
@@ -1982,7 +2036,6 @@
       100% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
     }
 
-    /* ===== WIN OVERLAY ===== */
     .win-overlay {
       position: fixed; inset: 0; z-index: 160;
       background: radial-gradient(circle at center, rgba(30,61,117,0.96) 0%, rgba(5,10,20,0.98) 75%);
@@ -2150,7 +2203,6 @@
     <div class="splash-loader"><span></span><span></span><span></span></div>
   </div>
 
-  <!-- ==================== MODE SCREEN ==================== -->
   <div class="mode-screen hidden" id="mode-screen">
     <div class="mode-top-area">
       <div class="mode-profile-pill" id="mode-profile-pill" onclick="openProfile()">
@@ -2518,7 +2570,8 @@
   </div>
 
   <div class="mini-overlay" id="room-overlay">
-    <div class="mini-card">
+    <div class="mini-card" style="position:relative;">
+      <button class="room-minimize-btn" onclick="minimizeRoomPanel()" title="Minimize">─</button>
       <div class="mini-title">🔗 রুম</div>
       <div class="room-code-display">
         <div class="room-code-label">রুম কোড</div>
@@ -2702,6 +2755,7 @@
         <li><span class="ht-ico">👥</span><span><b>বন্ধু সিস্টেমে</b> UID সার্চ করে ফ্রেন্ড রিকোয়েস্ট পাঠান, গ্রহণ করুন।</span></li>
         <li><span class="ht-ico">💬</span><span><b>ইনবক্সে</b> যেকোনো ইউজারের সাথে চ্যাট করুন। Message বাটনে ক্লিক করলেই নতুন বা পুরোনো চ্যাট ওপেন হবে।</span></li>
         <li><span class="ht-ico">🚫</span><span><b>ব্লক/আনব্লক:</b> চ্যাট হেডারে <b>Block</b> বাটনে চাপলে ব্লক হবে, আবার <b>Unblock</b> চাপলে আনব্লক হবে।</span></li>
+        <li><span class="ht-ico">➖</span><span><b>রুম মিনিমাইজ:</b> রুম প্যানেলের উপরের ডান কোণের <b>─</b> বাটনে চাপ দিলে রুম মিনিমাইজ হয়ে যাবে — তখন আপনি UID কপি করতে, চ্যাট করতে বা অন্য কিছু করতে পারবেন। নিচে সবুজ ডটসহ রুম কোড বাটনে ক্লিক করলেই আবার ফিরে আসবে। রুম সক্রিয় থাকে, বাতিল হয় না।</span></li>
         <li><span class="ht-ico">🏆</span><span>যে খেলোয়াড় সবার আগে <b>৪টি গুটি</b> হোমে পৌঁছাবে, সে-ই বিজয়ী।</span></li>
       </ul>
       <button class="mini-btn wide" onclick="closeHowToPlay()">বুঝেছি</button>
@@ -2743,7 +2797,6 @@
     </div>
   </div>
 
-  <!-- ===== WIN OVERLAY ===== -->
   <div class="win-overlay" id="win-overlay">
     <div class="win-rays"></div>
     <div class="win-card">
@@ -2754,6 +2807,12 @@
       <div class="win-prize" id="win-prize" style="display:none;">🪙 +0 কয়েন</div>
       <button class="win-btn" onclick="closeWinOverlay()">ঠিক আছে</button>
     </div>
+  </div>
+
+  <div class="room-minimized-indicator hidden" id="room-minimized-indicator" title="Tap to return to room">
+    <span class="rmi-icon">🔗</span>
+    <span id="room-min-code">XXXXXX</span>
+    <span class="rmi-pulse"></span>
   </div>
 
   <div class="lk-toast" id="lk-toast"></div>
@@ -3397,7 +3456,7 @@
       document.getElementById('room-status').innerHTML = '<span><span class="rs-dot"></span>লোড হচ্ছে...</span>';
       document.getElementById('room-ready-btn').disabled = true;
       document.getElementById('room-ready-btn').innerText = '⏳ অপেক্ষা...';
-
+      document.getElementById('room-minimized-indicator').classList.add('hidden');
       document.getElementById('room-overlay').classList.add('show');
 
       if (privateRoomRef) { try { privateRoomRef.off(); } catch(e){} }
@@ -3432,6 +3491,7 @@
 
     function closeRoomPanel() {
       document.getElementById('room-overlay').classList.remove('show');
+      document.getElementById('room-minimized-indicator').classList.add('hidden');
       if (privateRoomRef) { try { privateRoomRef.off(); } catch(e){} privateRoomRef = null; }
       if (privateRoomTick) { clearInterval(privateRoomTick); privateRoomTick = null; }
       privateRoomData = null;
@@ -3440,8 +3500,47 @@
       document.getElementById('mode-screen').classList.remove('hidden');
     }
 
+    /* ===== MINIMIZE / RESTORE ROOM PANEL ===== */
+    function minimizeRoomPanel() {
+      if (!privateRoomData && !privateRoomCode) return;
+      const code = (privateRoomData && privateRoomData.roomCode) || privateRoomCode || 'XXXXXX';
+      document.getElementById('room-min-code').innerText = code;
+      document.getElementById('room-overlay').classList.remove('show');
+      document.getElementById('room-minimized-indicator').classList.remove('hidden');
+
+      document.getElementById('mode-screen').classList.remove('hidden');
+      document.getElementById('global-room-screen').classList.add('hidden');
+      document.getElementById('friends-screen').classList.add('hidden');
+      document.getElementById('inbox-screen').classList.add('hidden');
+      document.getElementById('chat-screen').classList.add('hidden');
+
+      vibrate(15);
+      showToast('🔗 রুম মিনিমাইজড — নিচে সবুজ ডটে ট্যাপ করে ফিরুন');
+    }
+
+    function restoreRoomPanel() {
+      if (!privateRoomData && !privateRoomCode) {
+        document.getElementById('room-minimized-indicator').classList.add('hidden');
+        return;
+      }
+      document.getElementById('room-minimized-indicator').classList.add('hidden');
+      document.getElementById('room-overlay').classList.add('show');
+
+      document.getElementById('mode-screen').classList.add('hidden');
+      document.getElementById('global-room-screen').classList.add('hidden');
+      document.getElementById('friends-screen').classList.add('hidden');
+      document.getElementById('inbox-screen').classList.add('hidden');
+      document.getElementById('chat-screen').classList.add('hidden');
+
+      vibrate(15);
+    }
+
     function renderRoomPanel(room) {
       document.getElementById('room-code-value').innerText = room.roomCode;
+      if (document.getElementById('room-minimized-indicator') &&
+          !document.getElementById('room-minimized-indicator').classList.contains('hidden')) {
+        document.getElementById('room-min-code').innerText = room.roomCode;
+      }
       const container = document.getElementById('room-players');
       container.innerHTML = '';
       const activeColors = getActiveColors(room.mode);
@@ -3684,6 +3783,7 @@
       });
 
       document.getElementById('room-overlay').classList.remove('show');
+      document.getElementById('room-minimized-indicator').classList.add('hidden');
       if (privateRoomRef) { try { privateRoomRef.off(); } catch(e){} privateRoomRef = null; }
       if (privateRoomTick) { clearInterval(privateRoomTick); privateRoomTick = null; }
 
@@ -4228,6 +4328,7 @@
       document.getElementById('quick-chat-panel').classList.remove('show');
       document.getElementById('emoji-panel').classList.remove('show');
       document.getElementById('emote-bubble').classList.remove('show');
+      document.getElementById('room-minimized-indicator').classList.add('hidden');
       currentBetInfo = null;
       setTimeout(() => {
         document.getElementById('mode-screen').classList.remove('hidden');
@@ -4561,7 +4662,6 @@
         if (gridCells[`${coord.r},${coord.c}`]) gridCells[`${coord.r},${coord.c}`].classList.add('star');
       });
 
-      // Create 4 home spots inside center area for final position (step 56)
       const centerArea = document.querySelector('.center-area');
       if (centerArea) {
         ['blue','red','green','yellow'].forEach(color => {
@@ -4586,7 +4686,6 @@
     }
 
     function renderPawn(pawn) {
-      // Final home position - inside the center area
       if (pawn.step === 56) {
         const spot = document.getElementById('home-spot-' + pawn.color);
         if (spot) spot.appendChild(pawn.element);
@@ -4796,9 +4895,7 @@
       } else nextTurn();
     }
 
-    /* ================= WIN LOGIC ================= */
     function getWinnerInfo(winnerColor) {
-      // For online: use onlineMySeat and other seats from card UI
       if (isOnlineMatch && winnerColor === onlineMySeat) {
         return { name: profile.name, avatar: profile.avatar };
       }
@@ -4875,10 +4972,6 @@
       return pawns.filter(p => p.color === color && p.step === 56).length === 4;
     }
 
-    /* ============================================================
-       ============  ONLINE MULTIPLAYER SYNC  ====================
-       ============================================================ */
-
     async function initializeOnlineGameState(roomSnapshot) {
       if (!fbReady || !onlineRoomCode) return;
       const gameRef = fbDB.ref('rooms/' + onlineRoomCode + '/game');
@@ -4948,7 +5041,6 @@
       if (turnTickTimer) clearInterval(turnTickTimer);
       turnTickTimer = setInterval(checkOnlineTurnTimeout, 5000);
 
-      // Emote listener
       const emoteRef = fbDB.ref('rooms/' + onlineRoomCode + '/emote');
       emoteRef.on('value', (snap) => {
         const emote = snap.val();
@@ -5310,9 +5402,6 @@
       }
     }
 
-    /* ============================================================
-       =============  QUICK CHAT / EMOJI (in-game)  ==============
-       ============================================================ */
     const QUICK_MESSAGES = [
       'সুন্দর চাল! 👏',
       'আমার ভাগ্য খারাপ 😅',
@@ -5389,9 +5478,6 @@
       }
     }
 
-    /* ============================================================
-       ==================  FRIENDS SYSTEM  ========================
-       ============================================================ */
     const USERS_DB_KEY = 'ludoking_users_db_v1';
     const DEMO_FRIEND_REQ_KEY = 'ludoking_demo_friend_req_v1';
 
@@ -6055,9 +6141,6 @@
       }, 2000);
     }
 
-    /* ============================================================
-       ==================  INBOX / CHAT SYSTEM  ==================
-       ============================================================ */
     const CONVERSATIONS_DB_KEY = 'ludoking_conversations_v1';
     let conversationsDB = {};
     let currentChatUserId = null;
@@ -6388,7 +6471,6 @@
       const other = usersDB[mockUid];
       if (!other) return;
 
-      // If I have blocked this user, they can't send messages to me
       if (isUserBlockedByMe(mockUid)) return;
 
       const delay = 1500 + Math.random() * 2000;
@@ -6482,7 +6564,164 @@
     window.openInboxScreen = openInboxScreen;
     window.openChatWith = openChatWith;
 
-    /* ================= LOAD ================= */
+    /* ============================================================
+       ===== ROOM MINIMIZED INDICATOR — DRAGGABLE (NEW)  =========
+       ============================================================
+       পিলটিকে pointer events দিয়ে ড্র্যাগ করা যায়।
+       - ছোট ট্যাপ (drag threshold এর ভিতরে) হলে restoreRoomPanel() কল হবে।
+       - Drag করলে স্ক্রিনে যেকোনো জায়গায় সরানো যাবে (viewport clamp সহ)।
+       - Drag চলাকালীন floating animation বন্ধ থাকে।
+       - পজিশন localStorage-এ সেভ হয় যাতে রিলোডেও থাকে।
+       ============================================================ */
+    const RMI_POS_KEY = 'ludoking_room_indicator_pos_v1';
+
+    (function initRoomMinimizedDrag() {
+      const el = document.getElementById('room-minimized-indicator');
+      if (!el) return;
+
+      // inline onclick সরিয়ে দিই, নিজে tap-vs-drag হ্যান্ডেল করব
+      el.onclick = null;
+      el.style.touchAction = 'none';
+      el.style.cursor = 'grab';
+
+      let pointerId = null;
+      let dragging = false;
+      let moved = false;
+      let startX = 0, startY = 0;
+      let startLeft = 0, startTop = 0;
+      const DRAG_THRESHOLD = 6; // pixels — এর কম সরলে ট্যাপ ধরা হবে
+
+      // আগের সেভ করা পজিশন থাকলে apply করি
+      function applySavedPos() {
+        try {
+          const raw = localStorage.getItem(RMI_POS_KEY);
+          if (!raw) return;
+          const pos = JSON.parse(raw);
+          if (typeof pos.left !== 'number' || typeof pos.top !== 'number') return;
+          // viewport এর ভিতরে clamp করে নিই
+          const w = el.offsetWidth || 120;
+          const h = el.offsetHeight || 40;
+          const maxLeft = Math.max(0, window.innerWidth - w);
+          const maxTop = Math.max(0, window.innerHeight - h);
+          const left = Math.max(0, Math.min(maxLeft, pos.left));
+          const top = Math.max(0, Math.min(maxTop, pos.top));
+          el.style.animation = 'none'; // floating বন্ধ — fixed pos
+          el.style.left = left + 'px';
+          el.style.top = top + 'px';
+          el.style.right = 'auto';
+          el.style.bottom = 'auto';
+        } catch (_) {}
+      }
+      applySavedPos();
+
+      // viewport resize হলে clamp করি
+      window.addEventListener('resize', () => {
+        if (el.classList.contains('hidden')) return;
+        if (el.style.left && el.style.top) {
+          const w = el.offsetWidth;
+          const h = el.offsetHeight;
+          const maxLeft = Math.max(0, window.innerWidth - w);
+          const maxTop = Math.max(0, window.innerHeight - h);
+          let left = parseFloat(el.style.left) || 0;
+          let top = parseFloat(el.style.top) || 0;
+          left = Math.max(0, Math.min(maxLeft, left));
+          top = Math.max(0, Math.min(maxTop, top));
+          el.style.left = left + 'px';
+          el.style.top = top + 'px';
+        }
+      });
+
+      function onDown(e) {
+        if (el.classList.contains('hidden')) return;
+        if (pointerId !== null) return;
+
+        pointerId = e.pointerId;
+        dragging = true;
+        moved = false;
+        startX = e.clientX;
+        startY = e.clientY;
+
+        const rect = el.getBoundingClientRect();
+        startLeft = rect.left;
+        startTop = rect.top;
+
+        // drag শুরু — floating animation বন্ধ করে fixed pos এ নিয়ে আসি
+        el.style.animation = 'none';
+        el.style.transition = 'none';
+        el.style.left = startLeft + 'px';
+        el.style.top = startTop + 'px';
+        el.style.right = 'auto';
+        el.style.bottom = 'auto';
+        el.classList.add('dragging');
+
+        try { el.setPointerCapture(pointerId); } catch (_) {}
+
+        // browser এর default drag/scroll/select আটকাই
+        e.preventDefault();
+      }
+
+      function onMove(e) {
+        if (!dragging || e.pointerId !== pointerId) return;
+
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+
+        if (!moved && (Math.abs(dx) + Math.abs(dy)) > DRAG_THRESHOLD) {
+          moved = true;
+        }
+        if (!moved) return;
+
+        const w = el.offsetWidth;
+        const h = el.offsetHeight;
+        let newLeft = startLeft + dx;
+        let newTop = startTop + dy;
+
+        const maxLeft = Math.max(0, window.innerWidth - w);
+        const maxTop = Math.max(0, window.innerHeight - h);
+
+        newLeft = Math.max(0, Math.min(maxLeft, newLeft));
+        newTop = Math.max(0, Math.min(maxTop, newTop));
+
+        el.style.left = newLeft + 'px';
+        el.style.top = newTop + 'px';
+
+        e.preventDefault();
+      }
+
+      function onUp(e) {
+        if (!dragging) return;
+        if (pointerId !== null && e.pointerId !== pointerId) return;
+
+        try { el.releasePointerCapture(pointerId); } catch (_) {}
+
+        const wasTap = !moved;
+        dragging = false;
+        pointerId = null;
+        moved = false;
+        el.classList.remove('dragging');
+
+        if (wasTap) {
+          // ট্যাপ → রুম প্যানেল রিস্টোর
+          try { restoreRoomPanel(); } catch (_) {}
+        } else {
+          // নতুন পজিশন সেভ
+          try {
+            const rect = el.getBoundingClientRect();
+            localStorage.setItem(RMI_POS_KEY, JSON.stringify({
+              left: rect.left, top: rect.top
+            }));
+          } catch (_) {}
+        }
+      }
+
+      el.addEventListener('pointerdown', onDown, { passive: false });
+      el.addEventListener('pointermove', onMove, { passive: false });
+      el.addEventListener('pointerup', onUp);
+      el.addEventListener('pointercancel', onUp);
+      // contextmenu (long press) ব্লক — মোবাইলে long press এ popup আসা আটকায়
+      el.addEventListener('contextmenu', (e) => e.preventDefault());
+    })();
+
     window.addEventListener('load', () => {
       loadSettings();
       loadProfile();
