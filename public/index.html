@@ -2749,6 +2749,7 @@
         <li><span class="ht-ico">🎲</span><span>পালা এলে ডায়াইসে চাপ দিন। <b>৬</b> পড়লেই কেবল গুটি ইয়ার্ড থেকে বেরিয়ে বোর্ডে উঠবে।</span></li>
         <li><span class="ht-ico">🔁</span><span><b>৬</b> পড়লে চাল দেওয়ার পর আপনি আবার ডায়াইস চালানোর সুযোগ পাবেন।</span></li>
         <li><span class="ht-ico">⚔️</span><span>প্রতিপক্ষের গুটির ঘরে গেলে সেটি <b>কাটা</b> পড়ে ইয়ার্ডে ফিরে যায় — আর আপনি বোনাস চাল পান।</span></li>
+        <li><span class="ht-ico">🏠</span><span><b>নিজের গুটি হোমে পৌঁছালে</b> আপনি <b>বোনাস চাল</b> পাবেন!</span></li>
         <li><span class="ht-ico">⭐</span><span><b>তারাযুক্ত ঘর</b> হলো সেফ জোন। সেখানে কোনো গুটি কাটা যায় না।</span></li>
         <li><span class="ht-ico">💰</span><span><b>কয়েন ম্যাচে</b> এন্ট্রি ফি দিয়ে খেলুন। যে জিতবে সে মোট পুল থেকে <b>১০% সিস্টেম ফি</b> বাদ দিয়ে বাকি সব প্রাইজ হিসেবে পাবে।</span></li>
         <li><span class="ht-ico">⚠️</span><span><b>রুম বাতিল বা টাইম শেষ</b> হলে সব খেলোয়াড়ের <b>সম্পূর্ণ কয়েন ফেরত</b> পাবেন। কিন্তু <b>ম্যাচ চলাকালীন বের হলে</b> শুধু বের হওয়া খেলোয়াড়ের <b>৩০% কয়েন কাটা</b> হবে, বাকি ৭০% ফেরত পাবে।</span></li>
@@ -3424,7 +3425,7 @@
         slots,
         started: false,
         status: 'waiting',
-        isPrivate: true,   /* ⭐ কয়েন ম্যাচ = প্রাইভেট রুম (লাইভ লিস্টে দেখাবে না) */
+        isPrivate: true,
         createdAt: Date.now(),
         expiresAt: Date.now() + ROOM_EXPIRE_MS
       };
@@ -3444,7 +3445,7 @@
       pendingBetAmount = 0;
 
       openRoomPanel(roomCode);
-      showToast(`✅ প্রাইভেট রুম তৈরি! ${formatCoins(amt)} কয়েন কাটা হয়েছে।`);
+      showToast(`✅ রুম তৈরি! ${formatCoins(amt)} কয়েন কাটা হয়েছে।`);
     }
 
     function openRoomPanel(roomCode) {
@@ -3833,8 +3834,6 @@
         const data = snap.val() || {};
         const now = Date.now();
         const all = Object.values(data);
-        /* সব waiting রুম রাখি (isUserInAnyRoom-এর জন্য দরকার),
-           কিন্তু render-এর সময় প্রাইভেট রুম বাদ দেব */
         globalRooms = all.filter(r => r.status === 'waiting' && (!r.expiresAt || r.expiresAt > now));
         renderGlobalRooms();
       });
@@ -3890,7 +3889,6 @@
     function renderGlobalRooms() {
       const list = document.getElementById('gr-list');
       list.innerHTML = '';
-      /* ⭐ প্রাইভেট রুম (isPrivate:true) লাইভ লিস্টে দেখাবো না */
       const active = globalRooms.filter(r => r.status === 'waiting' && !r.isPrivate);
       if (active.length === 0) {
         list.innerHTML = '<div class="gr-empty">🌐 এই মুহূর্তে কোনো খোলা পাবলিক রুম নেই।<br>➕ উপরের বাটনে চাপ দিয়ে নতুন রুম তৈরি করুন!</div>';
@@ -4130,7 +4128,7 @@
         slots,
         started: false,
         status: 'waiting',
-        isPrivate: false,   /* ⭐ পাবলিক রুম (লাইভ লিস্টে দেখাবে) */
+        isPrivate: false,
         createdAt: Date.now(),
         expiresAt: Date.now() + ROOM_EXPIRE_MS
       };
@@ -4142,7 +4140,7 @@
       profile.coins -= amt;
       LudoAuth.setBalance(profile.coins);
       closeCreateRoom();
-      showToast(`✅ পাবলিক রুম তৈরি! ${formatCoins(amt)} কয়েন কাটা হয়েছে।`);
+      showToast(`✅ রুম তৈরি! ${formatCoins(amt)} কয়েন কাটা হয়েছে।`);
 
       document.getElementById('global-room-screen').classList.add('hidden');
       detachRoomsListener();
@@ -4860,9 +4858,14 @@
       }
       animatePawnMove(pawn, fromStep, toStep, () => finishMove(pawn));
     }
+
+    /* ⭐ পরিবর্তিত ফাংশন: নিজের গুটি হোমে পৌঁছালে বোনাস চাল */
     function finishMove(pawn) {
       let captured = false;
       let landedOnSafe = false;
+      let capturedColor = '';
+      const reachedHome = (pawn.step === 56);
+
       if (pawn.step >= 0 && pawn.step < 51) {
         const currentPathIdx = (playerConfigs[pawn.color].startIndex + pawn.step) % 52;
         if (safeIndices.includes(currentPathIdx)) {
@@ -4880,24 +4883,38 @@
             victim.step = -1;
             renderPawn(victim);
             captured = true;
+            capturedColor = victim.color;
             playCaptureSound();
-            document.getElementById('status-text').innerText =
-              `${victim.color.toUpperCase()}-এর গুটি কাটা পড়লো!`;
           }
         }
       }
+
       if (checkWin(pawn.color)) { handleMatchWin(pawn.color); return; }
-      if (landedOnSafe && !captured) {
-        document.getElementById('status-text').innerText =
-          `⭐ ${pawn.color.toUpperCase()}-এর গুটি সেফ জোনে পৌঁছেছে!`;
+
+      let statusMsg = '';
+      if (captured) {
+        statusMsg = `⚔️ ${capturedColor.toUpperCase()}-এর গুটি কাটা পড়লো! ${pawn.color.toUpperCase()} বোনাস চাল পাবে!`;
+      } else if (reachedHome) {
+        statusMsg = `🏠 ${pawn.color.toUpperCase()}-এর গুটি হোমে পৌঁছেছে! বোনাস চাল!`;
+      } else if (landedOnSafe) {
+        statusMsg = `⭐ ${pawn.color.toUpperCase()}-এর গুটি সেফ জোনে পৌঁছেছে!`;
       }
-      if (diceValue === 6 || captured) {
+      if (statusMsg) {
+        document.getElementById('status-text').innerText = statusMsg;
+      }
+
+      // 🎁 বোনাস চাল: ৬ পড়লে, গুটি কাটলে, বা গুটি হোমে (56) পৌঁছালে
+      if (diceValue === 6 || captured || reachedHome) {
         canRoll = true;
-        document.getElementById('status-text').innerText =
-          `${pawn.color.toUpperCase()} আবার ডাইস চালাবে!`;
+        if (!captured && !reachedHome) {
+          document.getElementById('status-text').innerText =
+            `${pawn.color.toUpperCase()} আবার ডাইস চালাবে!`;
+        }
       } else if (landedOnSafe) {
         setTimeout(() => nextTurn(), 400);
-      } else nextTurn();
+      } else {
+        nextTurn();
+      }
     }
 
     function getWinnerInfo(winnerColor) {
@@ -5181,6 +5198,7 @@
       }).catch(e => console.warn('writeOnlineDiceRoll failed', e));
     }
 
+    /* ⭐ পরিবর্তিত ফাংশন: নিজের গুটি হোমে পৌঁছালে online-এও বোনাস চাল */
     function computeOnlineMoveResult(seat, pawnIndex, fromStep, toStep, dice) {
       let capture = null;
       if (toStep >= 0 && toStep < 51) {
@@ -5197,7 +5215,9 @@
           }
         }
       }
-      const keepTurn = (dice === 6 || !!capture);
+      // 🎁 বোনাস চাল: ৬ পড়লে, গুটি কাটলে, বা গুটি হোমে (56) পৌঁছালে
+      const reachedHome = (toStep === 56);
+      const keepTurn = (dice === 6 || !!capture || reachedHome);
       let nextTurn = seat;
       if (!keepTurn) {
         const idx = activePlayers.indexOf(seat);
@@ -5208,6 +5228,7 @@
         seat, pawnIndex, fromStep, toStep,
         dice: dice,
         capture: capture,
+        reachedHome: reachedHome,
         nextTurn: nextTurn,
         keepTurn: keepTurn,
         at: Date.now()
@@ -6570,13 +6591,7 @@
     window.openChatWith = openChatWith;
 
     /* ============================================================
-       ===== ROOM MINIMIZED INDICATOR — DRAGGABLE (NEW)  =========
-       ============================================================
-       পিলটিকে pointer events দিয়ে ড্র্যাগ করা যায়।
-       - ছোট ট্যাপ (drag threshold এর ভিতরে) হলে restoreRoomPanel() কল হবে।
-       - Drag করলে স্ক্রিনে যেকোনো জায়গায় সরানো যাবে (viewport clamp সহ)।
-       - Drag চলাকালীন floating animation বন্ধ থাকে।
-       - পজিশন localStorage-এ সেভ হয় যাতে রিলোডেও থাকে।
+       ===== ROOM MINIMIZED INDICATOR — DRAGGABLE  ===============
        ============================================================ */
     const RMI_POS_KEY = 'ludoking_room_indicator_pos_v1';
 
