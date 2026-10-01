@@ -7,6 +7,7 @@
   <style>
     :root {
       --board-size: min(96vw, 60vh);
+      --cell-size: calc(var(--board-size) / 15);
       --theme-c1: #142c52;
       --theme-c2: #050a14;
       --theme-accent: #ffcc00;
@@ -310,7 +311,7 @@
     .pawn-red-mini { color: #c41a1a; }
     .pawn-green-mini { color: #007a3d; }
     .pawn-yellow-mini { color: #d9a800; }
-    .mode-label { font-size: 17px; font-weight: 900; color: #ffffff; letter-spacing: 1px; text-shadow: 0 2px 5px rgba(0,0,0,0.9); font-style: italic; }
+    .mode-label { font-size: 15px; font-weight: 900; color: #ffffff; letter-spacing: 0.5px; text-shadow: 0 2px 5px rgba(0,0,0,0.9); font-style: italic; text-align: center; }
     .mode-desc { font-size: 10px; color: #8bb4f0; letter-spacing: 1px; margin-top: 6px; font-weight: bold; }
     .mode-badge {
       position: absolute; top: 8px; right: 8px;
@@ -711,38 +712,43 @@
     .tri-bottom { border-width: 0 calc(var(--board-size) * 1.5 / 15) calc(var(--board-size) * 1.5 / 15) calc(var(--board-size) * 1.5 / 15); border-color: transparent transparent #d9a800 transparent; bottom: 0; left: 0; }
     .tri-left { border-width: calc(var(--board-size) * 1.5 / 15) 0 calc(var(--board-size) * 1.5 / 15) calc(var(--board-size) * 1.5 / 15); border-color: transparent transparent transparent #0059c9; top: 0; left: 0; }
 
+    /* ===== Home-spots at finish (bigger, matches cell size) ===== */
     .home-spot {
       position: absolute;
-      width: 22%; height: 22%;
+      width: 33%; height: 33%;
       z-index: 5;
       pointer-events: none;
       display: flex; align-items: center; justify-content: center;
     }
-    .home-spot .pawn { width: 88%; height: 88%; position: relative; filter: drop-shadow(0px 3px 3px rgba(0,0,0,0.75)); }
-    .home-spot-blue   { left: 1%;  top: 39%; }
-    .home-spot-red    { top: 1%;   left: 39%; }
-    .home-spot-green  { right: 1%; top: 39%; }
-    .home-spot-yellow { bottom: 1%; left: 39%; }
+    .home-spot-blue   { left: 1%;   top: 33.5%; }
+    .home-spot-red    { top: 1%;    left: 33.5%; }
+    .home-spot-green  { right: 1%;  top: 33.5%; }
+    .home-spot-yellow { bottom: 1%; left: 33.5%; }
 
+    /* ===== PAWN (consistent size using --cell-size) ===== */
     .pawn {
-      width: 96%; height: 96%; position: absolute; z-index: 10; cursor: pointer;
-      transition: filter 0.2s ease;
+      width: calc(var(--cell-size) * 1.08);
+      height: calc(var(--cell-size) * 1.08);
+      position: absolute; z-index: 10; cursor: pointer;
+      transition: filter 0.2s ease, margin 0.2s ease;
       display: flex; align-items: center; justify-content: center;
-      filter: drop-shadow(0px 5px 4px rgba(0,0,0,0.6));
-      transform-origin: center bottom; will-change: transform;
+      filter: drop-shadow(0px 4px 4px rgba(0,0,0,0.6));
+      transform-origin: center bottom;
+      will-change: transform;
+      pointer-events: auto;
     }
     .pawn .ludo-pin { width: 100%; height: 100%; display: block; pointer-events: none; }
     .pawn.highlight {
       animation: pawnBounce 0.5s infinite alternate; z-index: 15;
       filter: drop-shadow(0px 0px 8px #ffff00) drop-shadow(0px 8px 6px rgba(0,0,0,0.8));
     }
-    @keyframes pawnBounce { 0%{transform:translateY(0) scale(1);} 100%{transform:translateY(-35%) scale(1.2);} }
+    @keyframes pawnBounce { 0%{transform:translateY(0) scale(1);} 100%{transform:translateY(-30%) scale(1.15);} }
     .pawn.jumping { animation: pawnJump 0.26s cubic-bezier(0.33, 0.0, 0.2, 1); z-index: 20; }
     @keyframes pawnJump {
       0%   { transform: translateY(0) scale(1, 1); }
       15%  { transform: translateY(-8%) scale(1.12, 0.9); }
-      45%  { transform: translateY(-62%) scale(0.94, 1.08); }
-      75%  { transform: translateY(-25%) scale(1.06, 0.96); }
+      45%  { transform: translateY(-58%) scale(0.94, 1.08); }
+      75%  { transform: translateY(-22%) scale(1.06, 0.96); }
       100% { transform: translateY(0) scale(1, 1); }
     }
 
@@ -1515,6 +1521,7 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.5);
       cursor: pointer;
       transition: transform 0.15s ease;
+      position: relative;
     }
     .fr-user-avatar:active { transform: scale(0.9); }
     .fr-user-info { flex: 1; min-width: 0; }
@@ -1605,6 +1612,19 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.5);
       position: relative;
     }
+    .status-dot {
+      position: absolute;
+      bottom: -3px; right: -3px;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: #6b6b6b;
+      border: 2px solid #0a1729;
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+    }
+    .status-dot.online {
+      background: linear-gradient(180deg, #4ade80, #16a34a);
+      box-shadow: 0 0 8px rgba(74,222,128,0.95);
+    }
     .conv-info { flex: 1; min-width: 0; }
     .conv-name-row {
       display: flex; align-items: center; gap: 6px;
@@ -1625,6 +1645,7 @@
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
       font-family: Arial, sans-serif; letter-spacing: 0.2px;
     }
+    .conv-preview.typing { color: #7cffb0; font-style: italic; }
     .conv-item.unread .conv-preview { color: #cfe0ff; }
     .conv-unread-dot {
       width: 10px; height: 10px; border-radius: 50%;
@@ -1660,6 +1681,7 @@
       border: 2px solid var(--theme-accent);
       display: flex; align-items: center; justify-content: center;
       font-size: 19px; line-height: 1;
+      position: relative;
     }
     .chat-header-text { display: flex; flex-direction: column; min-width: 0; flex: 1; }
     .chat-header-name {
@@ -1669,10 +1691,12 @@
       font-style: italic;
     }
     .chat-header-status {
-      font-size: 9.5px; color: #7cffb0; font-weight: bold;
+      font-size: 9.5px; color: #8bb4f0; font-weight: bold;
       letter-spacing: 0.5px; margin-top: 2px;
       font-family: Arial, sans-serif;
+      transition: color 0.3s ease;
     }
+    .chat-header-status.online { color: #7cffb0; }
 
     .chat-block-btn {
       padding: 8px 12px;
@@ -2246,7 +2270,7 @@
           <div class="mini-pawn pawn-blue-mini"></div>
           <div class="mini-pawn pawn-green-mini"></div>
         </div>
-        <div class="mode-label">1 vs 1</div>
+        <div class="mode-label">1 vs 1 (২ জন)</div>
         <div class="mode-desc">দুই জন খেলোয়াড়</div>
       </div>
       <div class="mode-card" onclick="selectMatchType('4p')">
@@ -2257,7 +2281,7 @@
           <div class="mini-pawn pawn-yellow-mini"></div>
           <div class="mini-pawn pawn-green-mini"></div>
         </div>
-        <div class="mode-label">4 PLAYERS</div>
+        <div class="mode-label">4 Players (৪ জন)</div>
         <div class="mode-desc">চার জন খেলোয়াড়</div>
       </div>
     </div>
@@ -2421,7 +2445,7 @@
         <div class="chat-header-avatar" id="chat-header-avatar">👤</div>
         <div class="chat-header-text">
           <div class="chat-header-name" id="chat-header-name">User</div>
-          <div class="chat-header-status" id="chat-header-status">🟢 অনলাইন</div>
+          <div class="chat-header-status" id="chat-header-status">⚫ অফলাইন</div>
         </div>
       </div>
       <button class="chat-block-btn" id="chat-block-btn" onclick="toggleBlockCurrentChat()">Block</button>
@@ -2751,10 +2775,12 @@
         <li><span class="ht-ico">⚔️</span><span>প্রতিপক্ষের গুটির ঘরে গেলে সেটি <b>কাটা</b> পড়ে ইয়ার্ডে ফিরে যায় — আর আপনি বোনাস চাল পান।</span></li>
         <li><span class="ht-ico">🏠</span><span><b>নিজের গুটি হোমে পৌঁছালে</b> আপনি <b>বোনাস চাল</b> পাবেন!</span></li>
         <li><span class="ht-ico">⭐</span><span><b>তারাযুক্ত ঘর</b> হলো সেফ জোন। সেখানে কোনো গুটি কাটা যায় না।</span></li>
+        <li><span class="ht-ico">🎮</span><span><b>1 vs 1</b> মোডে শুধু দুই রঙ (নীল ও সবুজ) খেলে — বাকি দুই রঙের গুটি বোর্ডে থাকে না।</span></li>
         <li><span class="ht-ico">💰</span><span><b>কয়েন ম্যাচে</b> এন্ট্রি ফি দিয়ে খেলুন। যে জিতবে সে মোট পুল থেকে <b>১০% সিস্টেম ফি</b> বাদ দিয়ে বাকি সব প্রাইজ হিসেবে পাবে।</span></li>
         <li><span class="ht-ico">⚠️</span><span><b>রুম বাতিল বা টাইম শেষ</b> হলে সব খেলোয়াড়ের <b>সম্পূর্ণ কয়েন ফেরত</b> পাবেন। কিন্তু <b>ম্যাচ চলাকালীন বের হলে</b> শুধু বের হওয়া খেলোয়াড়ের <b>৩০% কয়েন কাটা</b> হবে, বাকি ৭০% ফেরত পাবে।</span></li>
         <li><span class="ht-ico">👥</span><span><b>বন্ধু সিস্টেমে</b> UID সার্চ করে ফ্রেন্ড রিকোয়েস্ট পাঠান, গ্রহণ করুন।</span></li>
-        <li><span class="ht-ico">💬</span><span><b>ইনবক্সে</b> যেকোনো ইউজারের সাথে চ্যাট করুন। Message বাটনে ক্লিক করলেই নতুন বা পুরোনো চ্যাট ওপেন হবে।</span></li>
+        <li><span class="ht-ico">🟢</span><span><b>রিয়েল-টাইম স্ট্যাটাস:</b> ইনবক্সে ও চ্যাট হেডারে সবুজ ডট মানে অনলাইন, ধূসর ডট মানে অফলাইন — এবং কতক্ষণ আগে সক্রিয় ছিলেন তাও দেখাবে।</span></li>
+        <li><span class="ht-ico">⌨️</span><span><b>টাইপিং ইন্ডিকেটর:</b> অন্য কেউ মেসেজ লিখতে শুরু করলে চ্যাটে <b>typing...</b> অ্যানিমেশন দেখাবে (রিয়েল-টাইমে)।</span></li>
         <li><span class="ht-ico">🚫</span><span><b>ব্লক/আনব্লক:</b> চ্যাট হেডারে <b>Block</b> বাটনে চাপলে ব্লক হবে, আবার <b>Unblock</b> চাপলে আনব্লক হবে।</span></li>
         <li><span class="ht-ico">➖</span><span><b>রুম মিনিমাইজ:</b> রুম প্যানেলের উপরের ডান কোণের <b>─</b> বাটনে চাপ দিলে রুম মিনিমাইজ হয়ে যাবে — তখন আপনি UID কপি করতে, চ্যাট করতে বা অন্য কিছু করতে পারবেন। নিচে সবুজ ডটসহ রুম কোড বাটনে ক্লিক করলেই আবার ফিরে আসবে। রুম সক্রিয় থাকে, বাতিল হয় না।</span></li>
         <li><span class="ht-ico">🏆</span><span>যে খেলোয়াড় সবার আগে <b>৪টি গুটি</b> হোমে পৌঁছাবে, সে-ই বিজয়ী।</span></li>
@@ -3915,7 +3941,7 @@
       info.className = 'gr-creator-info';
       info.innerHTML = `
         <div class="gr-creator-name">${escapeHtml(room.adminName || 'Admin')}</div>
-        <div class="gr-coin-line">🪙 ${formatCoins(room.amount)} Coins · ${room.mode === '1v1' ? '1 vs 1' : '4 Player'} · ${room.roomCode}</div>
+        <div class="gr-coin-line">🪙 ${formatCoins(room.amount)} Coins · ${room.mode === '1v1' ? '1 vs 1 (২ জন)' : '4 Player (৪ জন)'} · ${room.roomCode}</div>
       `;
       header.appendChild(info);
 
@@ -4229,6 +4255,146 @@
     }
 
     /* ============================================================
+       ==============  PRESENCE  (Real-time online/offline)  =====
+       ============================================================ */
+    let presenceInitialized = false;
+    const userStatusRefs = {};   // uid -> ref
+    const userStatuses = {};     // uid -> { state, lastChanged }
+
+    function initPresence() {
+      if (presenceInitialized || !fbReady || !profile || !profile.uid) return;
+      presenceInitialized = true;
+      const myStatusRef = fbDB.ref('users/' + profile.uid + '/status');
+      const connectedRef = fbDB.ref('.info/connected');
+      connectedRef.on('value', (snap) => {
+        if (snap.val() === true) {
+          myStatusRef.onDisconnect().set({
+            state: 'offline',
+            lastChanged: firebase.database.ServerValue.TIMESTAMP
+          }).then(() => {
+            myStatusRef.set({
+              state: 'online',
+              lastChanged: firebase.database.ServerValue.TIMESTAMP
+            });
+          }).catch(() => {});
+        }
+      });
+    }
+
+    function subscribeUserStatus(uid) {
+      if (!fbReady || !uid) return;
+      if (userStatusRefs[uid]) return;
+      const ref = fbDB.ref('users/' + uid + '/status');
+      userStatusRefs[uid] = ref;
+      ref.on('value', (snap) => {
+        const s = snap.val() || { state: 'offline' };
+        userStatuses[uid] = s;
+        updateStatusIndicatorsFor(uid);
+      });
+    }
+
+    function updateStatusIndicatorsFor(uid) {
+      const s = userStatuses[uid] || { state: 'offline' };
+      const online = s.state === 'online';
+      document.querySelectorAll(`[data-status-uid="${uid}"]`).forEach(el => {
+        const dot = el.querySelector('.status-dot');
+        if (dot) dot.classList.toggle('online', online);
+      });
+      if (currentChatUserId === uid) {
+        updateChatHeaderStatus(s);
+      }
+    }
+
+    function updateChatHeaderStatus(s) {
+      const el = document.getElementById('chat-header-status');
+      if (!el) return;
+      if (s && s.state === 'online') {
+        el.innerText = '🟢 অনলাইন';
+        el.classList.add('online');
+      } else {
+        el.classList.remove('online');
+        const last = s && s.lastChanged;
+        let txt = '⚫ অফলাইন';
+        if (last) {
+          const ago = Date.now() - last;
+          const mins = Math.floor(ago / 60000);
+          if (mins < 1) txt = '⚫ এইমাত্র সক্রিয় ছিলেন';
+          else if (mins < 60) txt = `⚫ ${mins} মিনিট আগে সক্রিয়`;
+          else if (mins < 1440) txt = `⚫ ${Math.floor(mins/60)} ঘণ্টা আগে সক্রিয়`;
+          else txt = `⚫ ${Math.floor(mins/1440)} দিন আগে সক্রিয়`;
+        }
+        el.innerText = txt;
+      }
+    }
+
+    /* ============================================================
+       ==============  TYPING INDICATOR (Real-time)  =============
+       ============================================================ */
+    let chatTypingRef = null;
+    let chatTypingSelfRef = null;
+    let typingDebounceTimer = null;
+    let typingClearTimer = null;
+
+    function setupTypingListeners(otherUid) {
+      if (!fbReady) return;
+      const pairId = getConversationId(profile.uid, otherUid);
+
+      // Other user's typing
+      if (chatTypingRef) { try { chatTypingRef.off(); } catch(e){} chatTypingRef = null; }
+      chatTypingRef = fbDB.ref('chats/' + pairId + '/typing/' + otherUid);
+      chatTypingRef.on('value', (snap) => {
+        const isTyping = !!snap.val();
+        const body = document.getElementById('chat-body');
+        if (!body) return;
+        let indicator = document.getElementById('chat-typing-indicator');
+        if (isTyping) {
+          if (!indicator) {
+            indicator = document.createElement('div');
+            indicator.id = 'chat-typing-indicator';
+            indicator.className = 'chat-typing';
+            indicator.innerHTML = '<span></span><span></span><span></span>';
+            body.appendChild(indicator);
+            body.scrollTop = body.scrollHeight;
+          }
+        } else {
+          if (indicator) indicator.remove();
+        }
+      });
+
+      // Self typing cleanup on disconnect
+      if (chatTypingSelfRef) { try { chatTypingSelfRef.off(); } catch(e){} chatTypingSelfRef = null; }
+      chatTypingSelfRef = fbDB.ref('chats/' + pairId + '/typing/' + profile.uid);
+      try { chatTypingSelfRef.onDisconnect().remove(); } catch (e) {}
+    }
+
+    function clearTypingIndicators() {
+      const body = document.getElementById('chat-body');
+      if (body) {
+        const indicator = document.getElementById('chat-typing-indicator');
+        if (indicator) indicator.remove();
+      }
+      if (chatTypingRef) { try { chatTypingRef.off(); } catch(e){} chatTypingRef = null; }
+      if (chatTypingSelfRef) { try { chatTypingSelfRef.off(); } catch(e){} chatTypingSelfRef = null; }
+    }
+
+    function onChatInputTyping() {
+      if (!currentChatUserId || !fbReady) return;
+      if (isUserBlockedByMe(currentChatUserId)) return;
+      const pairId = getConversationId(profile.uid, currentChatUserId);
+      const ref = fbDB.ref('chats/' + pairId + '/typing/' + profile.uid);
+      ref.set(true).catch(()=>{});
+      ref.onDisconnect().remove();
+      clearTimeout(typingClearTimer);
+      typingClearTimer = setTimeout(() => { ref.remove().catch(()=>{}); }, 2500);
+    }
+    function stopTypingIndicator() {
+      if (!currentChatUserId || !fbReady) return;
+      const pairId = getConversationId(profile.uid, currentChatUserId);
+      try { fbDB.ref('chats/' + pairId + '/typing/' + profile.uid).remove(); } catch (e) {}
+      clearTimeout(typingClearTimer);
+    }
+
+    /* ============================================================
        ====================  SETTINGS  ============================
        ============================================================ */
     function openSettings() {
@@ -4339,6 +4505,8 @@
       pawns.forEach(p => {
         p.step = -1;
         p.element.classList.remove('highlight', 'jumping');
+        p.element.style.marginLeft = '0';
+        p.element.style.marginTop = '0';
         renderPawn(p);
       });
       turnIndex = 0;
@@ -4368,6 +4536,7 @@
         profile.loggedIn = true;
         saveProfile();
         syncCurrentUserToDB();
+        initPresence();
         renderProfileUI();
         showToast('স্বাগতম, ' + profile.name + '!');
       },
@@ -4688,10 +4857,19 @@
       });
     }
 
+    /* ===== PAWN RENDERING (Step 1 & Step 2) ===== */
     function renderPawn(pawn) {
+      // Step 1: inactive colors — hide completely
+      if (!activePlayers.includes(pawn.color)) {
+        pawn.element.style.display = 'none';
+        return;
+      }
+      pawn.element.style.display = '';
+
       if (pawn.step === 56) {
         const spot = document.getElementById('home-spot-' + pawn.color);
         if (spot) spot.appendChild(pawn.element);
+        relayoutCellPawns();
         return;
       }
       let coord;
@@ -4705,7 +4883,36 @@
       }
       if (!coord) return;
       const targetCell = gridCells[`${coord.r},${coord.c}`];
-      if (targetCell) targetCell.appendChild(pawn.element);
+      if (targetCell) {
+        targetCell.appendChild(pawn.element);
+        relayoutCellPawns();
+      }
+    }
+
+    /* ===== Step 2: Multi-pawn overlap prevention ===== */
+    function relayoutCellPawns() {
+      const containers = document.querySelectorAll('.cell, .yard-spot, .home-spot');
+      containers.forEach(cell => {
+        const pawnsInCell = Array.from(cell.children).filter(el =>
+          el.classList && el.classList.contains('pawn') && el.style.display !== 'none'
+        );
+        const total = pawnsInCell.length;
+        if (total === 0) return;
+        if (total === 1) {
+          pawnsInCell[0].style.marginLeft = '0px';
+          pawnsInCell[0].style.marginTop = '0px';
+          pawnsInCell[0].style.zIndex = 10;
+          return;
+        }
+        const rect = cell.getBoundingClientRect();
+        const baseR = Math.min(rect.width || 26, rect.height || 26) * 0.24;
+        pawnsInCell.forEach((el, idx) => {
+          const angle = (idx / total) * Math.PI * 2 - Math.PI / 2;
+          el.style.marginLeft = (Math.cos(angle) * baseR).toFixed(2) + 'px';
+          el.style.marginTop  = (Math.sin(angle) * baseR).toFixed(2) + 'px';
+          el.style.zIndex = 10 + idx;
+        });
+      });
     }
 
     function updateTurnUI() {
@@ -4859,7 +5066,6 @@
       animatePawnMove(pawn, fromStep, toStep, () => finishMove(pawn));
     }
 
-    /* ⭐ পরিবর্তিত ফাংশন: নিজের গুটি হোমে পৌঁছালে বোনাস চাল */
     function finishMove(pawn) {
       let captured = false;
       let landedOnSafe = false;
@@ -4875,12 +5081,15 @@
         if (!safeIndices.includes(currentPathIdx)) {
           const opponentPawns = pawns.filter(p =>
             p.color !== pawn.color &&
+            activePlayers.includes(p.color) &&
             p.step >= 0 && p.step < 51 &&
             ((playerConfigs[p.color].startIndex + p.step) % 52) === currentPathIdx
           );
           if (opponentPawns.length === 1) {
             const victim = opponentPawns[0];
             victim.step = -1;
+            victim.element.style.marginLeft = '0px';
+            victim.element.style.marginTop = '0px';
             renderPawn(victim);
             captured = true;
             capturedColor = victim.color;
@@ -4903,7 +5112,6 @@
         document.getElementById('status-text').innerText = statusMsg;
       }
 
-      // 🎁 বোনাস চাল: ৬ পড়লে, গুটি কাটলে, বা গুটি হোমে (56) পৌঁছালে
       if (diceValue === 6 || captured || reachedHome) {
         canRoll = true;
         if (!captured && !reachedHome) {
@@ -5158,6 +5366,8 @@
           const victim = pawns.find(p => p.color === move.capture.seat && p.index === move.capture.pawnIndex);
           if (victim) {
             victim.step = -1;
+            victim.element.style.marginLeft = '0px';
+            victim.element.style.marginTop = '0px';
             renderPawn(victim);
             playCaptureSound();
           }
@@ -5198,7 +5408,6 @@
       }).catch(e => console.warn('writeOnlineDiceRoll failed', e));
     }
 
-    /* ⭐ পরিবর্তিত ফাংশন: নিজের গুটি হোমে পৌঁছালে online-এও বোনাস চাল */
     function computeOnlineMoveResult(seat, pawnIndex, fromStep, toStep, dice) {
       let capture = null;
       if (toStep >= 0 && toStep < 51) {
@@ -5206,6 +5415,7 @@
         if (!safeIndices.includes(pathIdx)) {
           for (const otherPawn of pawns) {
             if (otherPawn.color === seat) continue;
+            if (!activePlayers.includes(otherPawn.color)) continue;
             if (otherPawn.step < 0 || otherPawn.step >= 51) continue;
             const otherIdx = (playerConfigs[otherPawn.color].startIndex + otherPawn.step) % 52;
             if (otherIdx === pathIdx) {
@@ -5215,7 +5425,6 @@
           }
         }
       }
-      // 🎁 বোনাস চাল: ৬ পড়লে, গুটি কাটলে, বা গুটি হোমে (56) পৌঁছালে
       const reachedHome = (toStep === 56);
       const keepTurn = (dice === 6 || !!capture || reachedHome);
       let nextTurn = seat;
@@ -5400,12 +5609,15 @@
       pawns.forEach(p => {
         p.step = -1;
         p.element.classList.remove('highlight', 'jumping');
+        p.element.style.marginLeft = '0px';
+        p.element.style.marginTop = '0px';
         renderPawn(p);
       });
+      relayoutCellPawns();
 
       const t = document.getElementById('tb-title');
       if (t) {
-        const modeLabel = mode === '1v1' ? '1 vs 1' : '4 PLAYER';
+        const modeLabel = mode === '1v1' ? '1 vs 1 (২ জন)' : '4 PLAYERS (৪ জন)';
         t.innerText = isBetMatch ? `${modeLabel} · 💰 কয়েন এন্ট্রি` : `${modeLabel} MATCH`;
       }
 
@@ -5545,9 +5757,8 @@
         const friendsList = Object.keys(data.friendsList || {});
         const incoming = Object.keys(data.requestsIncoming || {});
         const sent = Object.keys(data.sentRequests || {});
-        const allUids = [...new Set([...friendsList, ...incoming, ...sent])];
 
-        await Promise.all(allUids.map(async (uid) => {
+        await Promise.all(friendsList.map(async (uid) => {
           if (usersDB[uid]) return;
           try {
             const s = await fbDB.ref('users/' + uid).get();
@@ -5557,6 +5768,8 @@
             );
           } catch (e) {}
         }));
+        incoming.forEach(uid => subscribeUserStatus(uid));
+        friendsList.forEach(uid => subscribeUserStatus(uid));
 
         if (!usersDB[profile.uid]) usersDB[profile.uid] = {};
         usersDB[profile.uid].friends = friendsList;
@@ -5608,6 +5821,7 @@
         });
         attachFriendsListener();
         attachRefundsListener();
+        initPresence();
       }
     }
 
@@ -5808,7 +6022,7 @@
           <div class="fr-result-info">
             <div class="fr-result-name">${escapeHtml(room.adminName)}-এর রুম</div>
             <div class="fr-result-uid">🌐 ${escapeHtml(room.roomCode)}</div>
-            <div class="fr-result-status friend">🪙 ${formatCoins(room.amount)} কয়েন · ${room.mode === '1v1' ? '1 vs 1' : '4 Player'} · ${filled}/${activeColors.length}</div>
+            <div class="fr-result-status friend">🪙 ${formatCoins(room.amount)} কয়েন · ${room.mode === '1v1' ? '1 vs 1 (২ জন)' : '4 Player (৪ জন)'} · ${filled}/${activeColors.length}</div>
           </div>
         `;
         const btn = document.createElement('button');
@@ -5930,6 +6144,7 @@
       friendIds.forEach(uid => {
         const u = usersDB[uid];
         if (!u) return;
+        subscribeUserStatus(uid);
         container.appendChild(buildUserCard(u, 'friend'));
       });
     }
@@ -5982,7 +6197,10 @@
 
       const av = document.createElement('div');
       av.className = 'fr-user-avatar';
-      av.innerText = u.avatar;
+      av.setAttribute('data-status-uid', u.uid);
+      const s = userStatuses[u.uid];
+      const online = s && s.state === 'online';
+      av.innerHTML = `${u.avatar}<div class="status-dot${online ? ' online' : ''}"></div>`;
       av.onclick = () => openProfileAction(u.uid, u.name, u.avatar);
       card.appendChild(av);
 
@@ -6299,8 +6517,12 @@
         const lastMsg = conv.messages[conv.messages.length - 1];
         if (!lastMsg) return;
 
+        subscribeUserStatus(otherUid);
+
         const unreadCount = conv.messages.filter(m => m.sender_id !== profile.uid && !m.read).length;
         const isBlocked = isUserBlockedByMe(otherUid);
+        const status = userStatuses[otherUid];
+        const online = status && status.state === 'online';
 
         const item = document.createElement('div');
         item.className = 'conv-item' + (unreadCount > 0 ? ' unread' : '') + (isBlocked ? ' blocked' : '');
@@ -6312,7 +6534,10 @@
         if (isBlocked) previewText = '🚫 Blocked — ' + previewText;
 
         item.innerHTML = `
-          <div class="conv-avatar">${other.avatar}</div>
+          <div class="conv-avatar" data-status-uid="${otherUid}">
+            ${other.avatar}
+            <div class="status-dot${online ? ' online' : ''}"></div>
+          </div>
           <div class="conv-info">
             <div class="conv-name-row">
               <div class="conv-name">${escapeHtml(other.name)}${isBlocked ? ' 🚫' : ''}</div>
@@ -6364,6 +6589,8 @@
       getOrCreateConversation(profile.uid, uid);
       currentChatUserId = uid;
       attachChatListener(uid);
+      setupTypingListeners(uid);
+      subscribeUserStatus(uid);
 
       document.getElementById('mode-screen').classList.add('hidden');
       document.getElementById('friends-screen').classList.add('hidden');
@@ -6373,6 +6600,9 @@
 
       document.getElementById('chat-header-avatar').innerText = avatar || '👤';
       document.getElementById('chat-header-name').innerText = name || 'User';
+
+      // Set status
+      updateChatHeaderStatus(userStatuses[uid] || { state: 'offline' });
 
       markConversationRead(profile.uid, uid);
       updateChatBlockButton();
@@ -6396,6 +6626,8 @@
     }
 
     function closeChatScreen() {
+      stopTypingIndicator();
+      clearTypingIndicators();
       document.getElementById('chat-screen').classList.add('hidden');
       currentChatUserId = null;
       document.getElementById('inbox-screen').classList.remove('hidden');
@@ -6412,6 +6644,8 @@
     function renderChatMessages() {
       if (!currentChatUserId) return;
       const body = document.getElementById('chat-body');
+      // Preserve typing indicator
+      const typingEl = document.getElementById('chat-typing-indicator');
       const conv = getConversation(profile.uid, currentChatUserId);
       body.innerHTML = '';
       if (!conv || conv.messages.length === 0) {
@@ -6419,6 +6653,7 @@
         empty.style.cssText = 'text-align:center;padding:40px 20px;color:#8bb4f0;font-family:Arial,sans-serif;font-size:12px;font-weight:bold;line-height:1.7;letter-spacing:0.3px;';
         empty.innerHTML = `💬<br>এখনও কোনো মেসেজ নেই।<br>প্রথম মেসেজটি পাঠান!`;
         body.appendChild(empty);
+        if (typingEl) body.appendChild(typingEl);
         return;
       }
 
@@ -6449,6 +6684,8 @@
         body.appendChild(row);
       });
 
+      if (typingEl) body.appendChild(typingEl);
+
       setTimeout(() => {
         body.scrollTop = body.scrollHeight;
       }, 60);
@@ -6464,6 +6701,8 @@
       const text = (inp.value || '').trim();
       if (!text) return;
       if (text.length > 500) { showToast('⚠️ মেসেজ অনেক বড়'); return; }
+
+      stopTypingIndicator();
 
       const msgObj = {
         id: 'msg_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
@@ -6586,6 +6825,17 @@
         if (!document.getElementById('chat-input').disabled) sendChatMessage();
       }
     });
+
+    // Chat typing input listener
+    (function initChatInputListener(){
+      const inp = document.getElementById('chat-input');
+      if (!inp) return;
+      inp.addEventListener('input', () => {
+        if (inp.value.length > 0) onChatInputTyping();
+        else stopTypingIndicator();
+      });
+      inp.addEventListener('blur', () => stopTypingIndicator());
+    })();
 
     window.openInboxScreen = openInboxScreen;
     window.openChatWith = openChatWith;
@@ -6733,6 +6983,10 @@
       el.addEventListener('contextmenu', (e) => e.preventDefault());
     })();
 
+    // Re-layout pawns when viewport changes
+    window.addEventListener('resize', () => { try { relayoutCellPawns(); } catch(e){} });
+    window.addEventListener('orientationchange', () => { setTimeout(() => { try { relayoutCellPawns(); } catch(e){} }, 200); });
+
     window.addEventListener('load', () => {
       loadSettings();
       loadProfile();
@@ -6746,6 +7000,8 @@
       updateFriendsBadge();
       updateInboxBadge();
       initBoard();
+      initPresence();
+      setTimeout(() => { try { relayoutCellPawns(); } catch(e){} }, 300);
 
       if (window.__fbInitError) {
         setTimeout(() => showToast('⚠️ Firebase চালু হয়নি: ' + window.__fbInitError), 1200);
