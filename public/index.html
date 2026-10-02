@@ -602,6 +602,33 @@
     .game-tool-btn:active { transform: scale(0.94); filter: brightness(1.15); }
     .game-tool-btn .gtb-ico { font-size: 16px; line-height: 1; }
 
+    /* ===== Turn Timer ===== */
+    .turn-timer {
+      position: absolute; top: 56px; left: 50%;
+      transform: translateX(-50%);
+      display: none; align-items: center; gap: 5px;
+      padding: 6px 14px;
+      background: linear-gradient(180deg, rgba(30,61,117,0.95), rgba(5,10,20,0.95));
+      border: 2px solid var(--theme-accent);
+      border-radius: 20px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px; font-weight: 900; color: #ffde00;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.7), 0 0 14px rgba(255,204,0,0.4);
+      z-index: 31;
+      letter-spacing: 1px;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+    }
+    .turn-timer.show { display: flex; }
+    .turn-timer.warn {
+      border-color: #ff5252; color: #ff9b9b;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.7), 0 0 20px rgba(255,82,82,0.75);
+      animation: timerPulse 0.7s ease-in-out infinite alternate;
+    }
+    @keyframes timerPulse {
+      0% { transform: translateX(-50%) scale(1); }
+      100% { transform: translateX(-50%) scale(1.1); }
+    }
+
     .emote-bubble {
       position: absolute;
       top: 30px; left: 50%;
@@ -712,7 +739,6 @@
     .tri-bottom { border-width: 0 calc(var(--board-size) * 1.5 / 15) calc(var(--board-size) * 1.5 / 15) calc(var(--board-size) * 1.5 / 15); border-color: transparent transparent #d9a800 transparent; bottom: 0; left: 0; }
     .tri-left { border-width: calc(var(--board-size) * 1.5 / 15) 0 calc(var(--board-size) * 1.5 / 15) calc(var(--board-size) * 1.5 / 15); border-color: transparent transparent transparent #0059c9; top: 0; left: 0; }
 
-    /* ===== Home-spots at finish (bigger, matches cell size) ===== */
     .home-spot {
       position: absolute;
       width: 33%; height: 33%;
@@ -725,7 +751,6 @@
     .home-spot-green  { right: 1%;  top: 33.5%; }
     .home-spot-yellow { bottom: 1%; left: 33.5%; }
 
-    /* ===== PAWN (consistent size using --cell-size) ===== */
     .pawn {
       width: calc(var(--cell-size) * 1.08);
       height: calc(var(--cell-size) * 1.08);
@@ -995,6 +1020,82 @@
     }
     .settings-exit-btn:active { transform: scale(0.96); filter: brightness(1.15); }
 
+    /* ===== Volume Slider ===== */
+    .volume-control {
+      display: flex; align-items: center; gap: 8px;
+      flex: 0 0 140px;
+      max-width: 140px;
+    }
+    .volume-slider {
+      -webkit-appearance: none; appearance: none;
+      flex: 1; min-width: 0;
+      height: 6px;
+      background: linear-gradient(90deg, #ffde00, #d99a00);
+      border-radius: 3px; outline: none;
+      cursor: pointer;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
+    }
+    .volume-slider::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none;
+      width: 18px; height: 18px; border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #fff, #d99a00);
+      border: 2px solid #fff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.6), 0 0 8px rgba(255,222,0,0.6);
+      cursor: pointer;
+    }
+    .volume-slider::-moz-range-thumb {
+      width: 18px; height: 18px; border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #fff, #d99a00);
+      border: 2px solid #fff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.6), 0 0 8px rgba(255,222,0,0.6);
+      cursor: pointer;
+    }
+    .volume-value {
+      font-size: 11px; font-weight: 900; color: #ffde00;
+      min-width: 38px; text-align: center;
+      font-family: 'Courier New', monospace;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+    }
+    .volume-mute-btn {
+      padding: 6px 9px; font-size: 14px;
+      background: rgba(255,255,255,0.08);
+      border: 1.5px solid rgba(255,255,255,0.15);
+      border-radius: 8px; cursor: pointer;
+      transition: transform 0.15s ease, background 0.15s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .volume-mute-btn:active { transform: scale(0.9); background: rgba(255,204,0,0.15); }
+
+    /* ===== Match History ===== */
+    .history-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 11px 12px; margin-bottom: 8px;
+      background: rgba(255,255,255,0.045);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-left: 4px solid #2c5599;
+      border-radius: 11px;
+      font-family: Arial, sans-serif;
+    }
+    .history-item.win { border-left-color: #2c8f4d; background: linear-gradient(90deg, rgba(44,143,77,0.15), rgba(255,255,255,0.02)); }
+    .history-item.loss { border-left-color: #c41a1a; background: linear-gradient(90deg, rgba(196,26,26,0.13), rgba(255,255,255,0.02)); }
+    .history-icon { font-size: 22px; line-height: 1; flex-shrink: 0; }
+    .history-info { flex: 1; min-width: 0; }
+    .history-title { font-size: 12px; font-weight: 900; color: #fff; letter-spacing: 0.3px; }
+    .history-title.win { color: #7cffb0; }
+    .history-title.loss { color: #ff9b9b; }
+    .history-meta { font-size: 10px; color: #8bb4f0; font-weight: bold; margin-top: 3px; letter-spacing: 0.2px; }
+    .history-mid { font-size: 9.5px; color: #cfe0ff; font-weight: bold; font-family: 'Courier New', monospace; margin-top: 3px; letter-spacing: 0.8px; }
+    .history-amount { font-size: 12px; font-weight: 900; color: #ffde00; text-align: right; flex-shrink: 0; }
+    .history-amount.neg { color: #ff9b9b; }
+
+    /* ===== Report ===== */
+    .report-note {
+      font-size: 11.5px; color: #cfe0ff; text-align: center;
+      line-height: 1.65; font-family: Arial, sans-serif; margin-bottom: 12px;
+      padding: 12px; background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08); border-radius: 11px;
+    }
+
     .mini-overlay {
       position: fixed; inset: 0; z-index: 130;
       background: rgba(2, 5, 12, 0.86);
@@ -1246,7 +1347,6 @@
     .room-status .rs-dot { display: inline-block; width: 6px; height: 6px; background: #ffde00; border-radius: 50%; margin-right: 6px; animation: dotBlink 1s ease-in-out infinite; }
     @keyframes dotBlink { 0%,100%{opacity:0.3;} 50%{opacity:1;} }
 
-    /* ===== ROOM MINIMIZE ===== */
     .room-minimize-btn {
       position: absolute; top: 12px; right: 12px;
       width: 34px; height: 34px; border-radius: 50%;
@@ -2308,6 +2408,11 @@
         <span class="gtb-ico">😀</span><span>Emoji</span>
       </button>
     </div>
+    <div class="turn-timer" id="turn-timer">
+      <span>⏱️</span>
+      <span id="turn-timer-text">45</span>
+      <span>s</span>
+    </div>
     <div class="quick-chat-panel" id="quick-chat-panel"></div>
     <div class="emoji-panel" id="emoji-panel"></div>
     <div class="emote-bubble" id="emote-bubble"></div>
@@ -2641,6 +2746,15 @@
           <span class="sr-label">সাউন্ড এফেক্ট<span class="sr-sub">ডাইস, গুটি ও কাটার শব্দ</span></span>
           <div class="toggle-switch" id="ts-sound"><div class="toggle-knob"></div></div>
         </div>
+        <div class="setting-row" onclick="event.stopPropagation()">
+          <span class="sr-icon">🎚️</span>
+          <span class="sr-label">ভলিউম<span class="sr-sub">সাউন্ডের মাত্রা বাড়ান/কমান</span></span>
+          <div class="volume-control">
+            <button class="volume-mute-btn" id="volume-mute-btn" onclick="toggleMuteFromSettings(event)">🔊</button>
+            <input type="range" class="volume-slider" id="volume-slider" min="0" max="200" value="100" oninput="onVolumeChange(event)">
+            <span class="volume-value" id="volume-value">100%</span>
+          </div>
+        </div>
         <div class="setting-row" onclick="toggleVibrationFromSettings(event)">
           <span class="sr-icon">📳</span>
           <span class="sr-label">ভাইব্রেশন<span class="sr-sub">ডিভাইস সাপোর্ট করলে কম্পন হবে</span></span>
@@ -2666,6 +2780,11 @@
       </div>
       <div class="settings-group">
         <div class="settings-group-title">সাহায্য ও তথ্য</div>
+        <div class="setting-row" onclick="openMatchHistory()">
+          <span class="sr-icon">📊</span>
+          <span class="sr-label">ম্যাচ হিস্টোরি<span class="sr-sub">সব ম্যাচের বিস্তারিত রেকর্ড দেখুন</span></span>
+          <span class="sr-arrow">›</span>
+        </div>
         <div class="setting-row" onclick="openHowToPlay()">
           <span class="sr-icon">📖</span>
           <span class="sr-label">কিভাবে খেলতে হয়<span class="sr-sub">সম্পূর্ণ নিয়ম ও নির্দেশনা</span></span>
@@ -2738,6 +2857,11 @@
           <span class="mi-label">বন্ধু তালিকা</span>
           <span class="mi-value" id="pp-friends-count">0 জন ›</span>
         </div>
+        <div class="pp-menu-item" onclick="openMatchHistory()">
+          <span class="mi-icon">📊</span>
+          <span class="mi-label">ম্যাচ হিস্টোরি</span>
+          <span class="mi-value" id="pp-history-count">0 টি ›</span>
+        </div>
         <div class="pp-menu-item" onclick="openHowToPlay()">
           <span class="mi-icon">📖</span>
           <span class="mi-label">কিভাবে খেলতে হয়</span>
@@ -2746,6 +2870,11 @@
         <div class="pp-menu-item" onclick="openEditName()">
           <span class="mi-icon">✏️</span>
           <span class="mi-label">নাম পরিবর্তন</span>
+          <span class="mi-value">›</span>
+        </div>
+        <div class="pp-menu-item" onclick="openReport()">
+          <span class="mi-icon">🚨</span>
+          <span class="mi-label">রিপোর্ট / যোগাযোগ</span>
           <span class="mi-value">›</span>
         </div>
         <div class="pp-menu-item danger" onclick="resetProfile()">
@@ -2782,10 +2911,39 @@
         <li><span class="ht-ico">🟢</span><span><b>রিয়েল-টাইম স্ট্যাটাস:</b> ইনবক্সে ও চ্যাট হেডারে সবুজ ডট মানে অনলাইন, ধূসর ডট মানে অফলাইন — এবং কতক্ষণ আগে সক্রিয় ছিলেন তাও দেখাবে।</span></li>
         <li><span class="ht-ico">⌨️</span><span><b>টাইপিং ইন্ডিকেটর:</b> অন্য কেউ মেসেজ লিখতে শুরু করলে চ্যাটে <b>typing...</b> অ্যানিমেশন দেখাবে (রিয়েল-টাইমে)।</span></li>
         <li><span class="ht-ico">🚫</span><span><b>ব্লক/আনব্লক:</b> চ্যাট হেডারে <b>Block</b> বাটনে চাপলে ব্লক হবে, আবার <b>Unblock</b> চাপলে আনব্লক হবে।</span></li>
-        <li><span class="ht-ico">➖</span><span><b>রুম মিনিমাইজ:</b> রুম প্যানেলের উপরের ডান কোণের <b>─</b> বাটনে চাপ দিলে রুম মিনিমাইজ হয়ে যাবে — তখন আপনি UID কপি করতে, চ্যাট করতে বা অন্য কিছু করতে পারবেন। নিচে সবুজ ডটসহ রুম কোড বাটনে ক্লিক করলেই আবার ফিরে আসবে। রুম সক্রিয় থাকে, বাতিল হয় না।</span></li>
+        <li><span class="ht-ico">➖</span><span><b>রুম মিনিমাইজ:</b> রুম প্যানেলের উপরের ডান কোণের <b>─</b> বাটনে চাপ দিলে রুম মিনিমাইজ হয়ে যাবে।</span></li>
+        <li><span class="ht-ico">🔄</span><span><b>ম্যাচ রিজিউম:</b> ভুলে ব্রাউজার বন্ধ হয়ে গেলে, আবার খুললে সেই চলমান ম্যাচেই ফিরে আসবেন — সার্ভারে গেম স্টেট সংরক্ষিত থাকে।</span></li>
+        <li><span class="ht-ico">⏱️</span><span><b>টার্ন টাইমার:</b> অনলাইন ম্যাচে প্রতি চালের জন্য <b>৪৫ সেকেন্ড</b> সময় — শেষ ১০ সেকেন্ডে লাল সতর্কতা দেখাবে।</span></li>
+        <li><span class="ht-ico">📊</span><span><b>ম্যাচ হিস্টোরি:</b> প্রতিটি ম্যাচ একটি <b>ইউনিক আইডি</b> সহ সেটিংসে সংরক্ষিত থাকে।</span></li>
         <li><span class="ht-ico">🏆</span><span>যে খেলোয়াড় সবার আগে <b>৪টি গুটি</b> হোমে পৌঁছাবে, সে-ই বিজয়ী।</span></li>
       </ul>
       <button class="mini-btn wide" onclick="closeHowToPlay()">বুঝেছি</button>
+    </div>
+  </div>
+
+  <div class="profile-overlay" id="history-overlay" onclick="historyOverlayClick(event)">
+    <div class="profile-panel">
+      <div class="howto-header">
+        <div class="howto-title">📊 ম্যাচ হিস্টোরি</div>
+        <div class="pp-close" onclick="closeMatchHistory()">✕</div>
+      </div>
+      <div id="history-list" style="margin-top:14px;"></div>
+    </div>
+  </div>
+
+  <div class="mini-overlay" id="report-overlay" onclick="reportOverlayClick(event)">
+    <div class="mini-card">
+      <div class="mini-title">🚨 রিপোর্ট / যোগাযোগ</div>
+      <div class="report-note">
+        কোনো সমস্যা, অভিযোগ বা পরামর্শ থাকলে<br>
+        আমাদের টেলিগ্রামে যোগাযোগ করুন।<br>
+        আপনার ম্যাচ আইডি সহ মেসেজ দিলে<br>
+        দ্রুত সমাধান পাবেন।
+      </div>
+      <button class="mini-btn wide" id="report-telegram-btn" onclick="openReportLink()">📩 টেলিগ্রামে মেসেজ দিন</button>
+      <div class="mini-actions" style="margin-top:10px;">
+        <button class="mini-btn ghost" onclick="closeReport()">বন্ধ করুন</button>
+      </div>
     </div>
   </div>
 
@@ -2851,13 +3009,20 @@
     const STORAGE_KEY = 'ludoking_profile_v1';
     const SETTINGS_KEY = 'ludoking_settings_v1';
 
+    /* ---- থিম তালিকা (color1/color2/color3 ফাইল থেকে সংগৃহীত) ---- */
     const THEMES = [
       { id: 'classic',  name: 'ক্লাসিক ব্লু',    c1: '#142c52', c2: '#050a14', accent: '#ffcc00' },
       { id: 'royal',    name: 'রয়্যাল পার্পল',  c1: '#3b1d63', c2: '#0a0414', accent: '#c792ff' },
       { id: 'emerald',  name: 'এমারল্ড নাইট',   c1: '#0b3d2e', c2: '#02100a', accent: '#4ce0a8' },
       { id: 'crimson',  name: 'ক্রিমসন রেড',    c1: '#4a0f18', c2: '#100204', accent: '#ff6b6b' },
       { id: 'sunset',   name: 'সানসেট অরেঞ্জ',  c1: '#5a2a00', c2: '#140600', accent: '#ffab40' },
-      { id: 'midnight', name: 'মিডনাইট ব্ল্যাক', c1: '#22222a', c2: '#000000', accent: '#e0e0e0' }
+      { id: 'midnight', name: 'মিডনাইট ব্ল্যাক', c1: '#22222a', c2: '#000000', accent: '#e0e0e0' },
+      { id: 'color1',   name: 'রঙিন বোর্ড (Color 1)', c1: '#064b91', c2: '#03132f', accent: '#ffcc00',
+        bg: 'radial-gradient(circle at 12% 18%, rgba(0,120,255,.55), transparent 28%),radial-gradient(circle at 88% 18%, rgba(255,40,55,.45), transparent 28%),radial-gradient(circle at 12% 82%, rgba(255,200,0,.40), transparent 28%),radial-gradient(circle at 88% 82%, rgba(0,220,120,.45), transparent 28%),radial-gradient(circle at 50% 50%, rgba(0,140,255,.35), transparent 38%),linear-gradient(135deg, #03132f, #064b91 50%, #03142f)' },
+      { id: 'color2',   name: 'গভীর নীল (Color 2)', c1: '#063b83', c2: '#031635', accent: '#4fc3f7',
+        bg: 'radial-gradient(circle at 50% 45%, rgba(0,170,255,.45), transparent 30%),radial-gradient(circle at 15% 20%, rgba(0,100,255,.35), transparent 25%),radial-gradient(circle at 85% 75%, rgba(0,220,180,.25), transparent 25%),linear-gradient(135deg, #061b46, #063b83 50%, #031635)' },
+      { id: 'color3',   name: 'নীল রেডিয়াল (Color 3)', c1: '#102b70', c2: '#050d2b', accent: '#00e0b3',
+        bg: 'radial-gradient(circle at 50% 35%, rgba(40,150,255,.65) 0%, transparent 32%),radial-gradient(circle at 10% 15%, rgba(90,40,255,.45) 0%, transparent 27%),radial-gradient(circle at 90% 20%, rgba(0,220,190,.35) 0%, transparent 25%),radial-gradient(circle at 15% 85%, rgba(255,190,0,.28) 0%, transparent 25%),radial-gradient(circle at 90% 85%, rgba(255,40,90,.30) 0%, transparent 25%),linear-gradient(135deg, #050d2b, #102b70 45%, #061c4b)' }
     ];
 
     const AVATARS = [
@@ -2865,8 +3030,14 @@
       '🐸', '🤖', '👽', '🐲', '🦅', '🐺', '🎩', '😎'
     ];
 
+    /* ============ রিপোর্ট টেলিগ্রাম লিংক ============
+       নিচের ভেরিয়েবলে আপনার টেলিগ্রাম লিংক বসান
+       উদাহরণ: const REPORT_TELEGRAM_LINK = 'https://t.me/YourUsername';
+       ================================================= */
+    const REPORT_TELEGRAM_LINK = '';
+
     let profile = null;
-    let gameSettings = { sound: true, vibration: true, speed: 'normal', highlight: true };
+    let gameSettings = { sound: true, vibration: true, speed: 'normal', highlight: true, volume: 1.0 };
 
     const SYSTEM_FEE_RATE = 0.10;
     const MIN_BET = 5;
@@ -2892,6 +3063,10 @@
     let lastEmoteAt = 0;
     const ONLINE_TURN_TIMEOUT_MS = 45000;
 
+    /* ============ TURN TIMER STATE ============ */
+    let turnTimerInterval = null;
+    let turnTimerEnd = 0;
+
     function saveActiveRoom(code) {
       try { localStorage.setItem('ludoking_active_room', code); } catch(e){}
     }
@@ -2913,6 +3088,12 @@
       let s = '';
       for (let i = 0; i < 6; i++) s += chars[Math.floor(Math.random() * chars.length)];
       return s;
+    }
+    function generateMatchId() {
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      let s = '';
+      for (let i = 0; i < 8; i++) s += chars[Math.floor(Math.random() * chars.length)];
+      return 'M-' + s;
     }
     function formatCoins(n) { return Number(n || 0).toLocaleString('en-US'); }
     function formatTimeLeft(ms) {
@@ -2949,7 +3130,8 @@
       let p = {
         uid: '', name: '', avatar: '👨‍💼', coins: 2500,
         theme: 'classic', matches: 0, wins: 0, loggedIn: false,
-        friends: [], friendRequests: [], sentRequests: [], blockedUsers: []
+        friends: [], friendRequests: [], sentRequests: [], blockedUsers: [],
+        matchHistory: []
       };
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
@@ -2962,6 +3144,7 @@
       if (!Array.isArray(p.friendRequests)) p.friendRequests = [];
       if (!Array.isArray(p.sentRequests)) p.sentRequests = [];
       if (!Array.isArray(p.blockedUsers)) p.blockedUsers = [];
+      if (!Array.isArray(p.matchHistory)) p.matchHistory = [];
       profile = p;
       saveProfile();
       return profile;
@@ -2975,6 +3158,7 @@
         if (raw) Object.assign(gameSettings, JSON.parse(raw));
       } catch (e) {}
       soundEnabled = gameSettings.sound;
+      if (typeof gameSettings.volume !== 'number') gameSettings.volume = 1.0;
     }
     function saveSettings() {
       try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(gameSettings)); } catch (e) {}
@@ -2985,6 +3169,38 @@
       root.style.setProperty('--theme-c1', t.c1);
       root.style.setProperty('--theme-c2', t.c2);
       root.style.setProperty('--theme-accent', t.accent);
+      const bodyEl = document.body;
+      if (bodyEl) {
+        if (t.bg) {
+          bodyEl.style.background = t.bg;
+          bodyEl.style.backgroundAttachment = 'fixed';
+        } else {
+          bodyEl.style.background = '';
+          bodyEl.style.backgroundAttachment = '';
+        }
+      }
+    }
+
+    /* ============ MATCH HISTORY ============ */
+    function addMatchToHistory(info) {
+      if (!profile) return null;
+      if (!Array.isArray(profile.matchHistory)) profile.matchHistory = [];
+      const entry = {
+        id: generateMatchId(),
+        mode: info.mode || '4p',
+        result: info.result || 'loss',
+        bet: Number(info.bet) || 0,
+        prize: Number(info.prize) || 0,
+        myColor: info.myColor || null,
+        winnerColor: info.winnerColor || null,
+        date: Date.now()
+      };
+      profile.matchHistory.unshift(entry);
+      if (profile.matchHistory.length > 100) {
+        profile.matchHistory = profile.matchHistory.slice(0, 100);
+      }
+      saveProfile();
+      return entry;
     }
 
     function renderProfileUI() {
@@ -3032,6 +3248,7 @@
     function updateProfileMenuCounts() {
       const friendsEl = document.getElementById('pp-friends-count');
       const inboxEl = document.getElementById('pp-inbox-count');
+      const historyEl = document.getElementById('pp-history-count');
       if (friendsEl) {
         const c = (profile.friends || []).length;
         friendsEl.innerText = c + ' জন ›';
@@ -3039,6 +3256,10 @@
       if (inboxEl) {
         const c = getTotalConversationCount();
         inboxEl.innerText = c + ' টি চ্যাট ›';
+      }
+      if (historyEl) {
+        const c = (profile.matchHistory || []).length;
+        historyEl.innerText = c + ' টি ›';
       }
     }
 
@@ -3061,6 +3282,49 @@
       document.querySelectorAll('#speed-options .speed-btn').forEach(b => {
         b.classList.toggle('active', b.dataset.speed === gameSettings.speed);
       });
+      updateVolumeUI();
+    }
+
+    /* ============ VOLUME CONTROL ============ */
+    function updateVolumeUI() {
+      const slider = document.getElementById('volume-slider');
+      const valEl = document.getElementById('volume-value');
+      const muteBtn = document.getElementById('volume-mute-btn');
+      if (!slider) return;
+      const pct = Math.round((gameSettings.volume || 0) * 100);
+      slider.value = pct;
+      if (valEl) valEl.innerText = pct + '%';
+      if (muteBtn) {
+        if (!gameSettings.sound || gameSettings.volume === 0) muteBtn.innerText = '🔇';
+        else if (gameSettings.volume < 0.5) muteBtn.innerText = '🔉';
+        else muteBtn.innerText = '🔊';
+      }
+    }
+    function onVolumeChange(ev) {
+      const val = parseInt(ev.target.value, 10);
+      gameSettings.volume = val / 100;
+      updateMasterGain();
+      updateVolumeUI();
+      saveSettings();
+      if (gameSettings.volume > 0 && gameSettings.sound) {
+        try { playHopSound(); } catch(e) {}
+      }
+    }
+    function toggleMuteFromSettings(ev) {
+      if (ev) ev.stopPropagation();
+      if (gameSettings.volume > 0) {
+        gameSettings._prevVolume = gameSettings.volume;
+        gameSettings.volume = 0;
+      } else {
+        gameSettings.volume = gameSettings._prevVolume || 1.0;
+      }
+      updateMasterGain();
+      updateVolumeUI();
+      saveSettings();
+      if (gameSettings.volume > 0 && gameSettings.sound) {
+        try { playHopSound(); } catch(e) {}
+      }
+      vibrate(15);
     }
 
     function openProfile() {
@@ -3128,6 +3392,63 @@
     function closeHowToPlay() { document.getElementById('howto-overlay').classList.remove('show'); }
     function howtoOverlayClick(e) { if (e.target.id === 'howto-overlay') closeHowToPlay(); }
 
+    /* ============ MATCH HISTORY SCREEN ============ */
+    function openMatchHistory() {
+      try { renderMatchHistory(); } catch (e) {}
+      document.getElementById('history-overlay').classList.add('show');
+    }
+    function closeMatchHistory() {
+      document.getElementById('history-overlay').classList.remove('show');
+    }
+    function historyOverlayClick(e) {
+      if (e.target.id === 'history-overlay') closeMatchHistory();
+    }
+    function renderMatchHistory() {
+      const list = document.getElementById('history-list');
+      if (!list) return;
+      const history = (profile && profile.matchHistory) || [];
+      if (history.length === 0) {
+        list.innerHTML = '<div class="fr-empty"><span class="fr-empty-ico">📊</span>এখনও কোনো ম্যাচ খেলা হয়নি।<br>খেলা শুরু করলেই এখানে রেকর্ড দেখা যাবে।</div>';
+        return;
+      }
+      list.innerHTML = '';
+      history.forEach(m => {
+        const item = document.createElement('div');
+        item.className = 'history-item ' + (m.result === 'win' ? 'win' : 'loss');
+        const d = new Date(m.date);
+        const dateStr = d.toLocaleDateString('en-GB') + ' ' +
+          String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+        const modeLabel = m.mode === '1v1' ? '1 vs 1' : '4 Player';
+        const betLabel = m.bet > 0 ? `💰 এন্ট্রি ${formatCoins(m.bet)}` : '🎲 ফ্রি ম্যাচ';
+        const prizeLabel = m.prize > 0 ? `+${formatCoins(m.prize)}` : '0';
+        item.innerHTML = `
+          <div class="history-icon">${m.result === 'win' ? '🏆' : '❌'}</div>
+          <div class="history-info">
+            <div class="history-title ${m.result}">${m.result === 'win' ? 'জয়' : 'হার'} · ${modeLabel}</div>
+            <div class="history-meta">${dateStr} · ${betLabel}</div>
+            <div class="history-mid">ID: ${m.id}</div>
+          </div>
+          <div class="history-amount ${m.prize > 0 ? '' : 'neg'}">🪙 ${prizeLabel}</div>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    /* ============ REPORT ============ */
+    function openReport() { document.getElementById('report-overlay').classList.add('show'); }
+    function closeReport() { document.getElementById('report-overlay').classList.remove('show'); }
+    function reportOverlayClick(e) {
+      if (e.target.id === 'report-overlay') closeReport();
+    }
+    function openReportLink() {
+      if (!REPORT_TELEGRAM_LINK) {
+        showToast('⚠️ রিপোর্ট লিংক এখনো কনফিগার করা হয়নি');
+        return;
+      }
+      try { window.open(REPORT_TELEGRAM_LINK, '_blank'); }
+      catch (e) { showToast('লিংক খোলা যায়নি'); }
+    }
+
     function openClassicMode() {
       getAudioCtx();
       const cards = document.querySelectorAll('.mode-card');
@@ -3185,6 +3506,7 @@
       vibrate([30, 20, 60, 20, 100]);
       if (!soundEnabled) return;
       const ctx = getAudioCtx(); if (!ctx) return;
+      const out = getMasterGain(ctx);
       const now = ctx.currentTime;
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
@@ -3194,7 +3516,7 @@
       gain.gain.setValueAtTime(0.0001, now);
       gain.gain.exponentialRampToValueAtTime(0.13, now + 0.05);
       gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.5);
-      osc.connect(gain); gain.connect(ctx.destination);
+      osc.connect(gain); gain.connect(out);
       osc.start(now); osc.stop(now + 0.5);
       const t2 = now + 0.35;
       const osc2 = ctx.createOscillator();
@@ -3205,7 +3527,7 @@
       gain2.gain.setValueAtTime(0.0001, t2);
       gain2.gain.exponentialRampToValueAtTime(0.28, t2 + 0.01);
       gain2.gain.exponentialRampToValueAtTime(0.0001, t2 + 0.35);
-      osc2.connect(gain2); gain2.connect(ctx.destination);
+      osc2.connect(gain2); gain2.connect(out);
       osc2.start(t2); osc2.stop(t2 + 0.36);
       const t3 = now + 0.55;
       [880, 1174, 1568].forEach((freq, i) => {
@@ -3216,7 +3538,7 @@
         g.gain.setValueAtTime(0.0001, st);
         g.gain.exponentialRampToValueAtTime(0.12, st + 0.008);
         g.gain.exponentialRampToValueAtTime(0.0001, st + 0.35);
-        o.connect(g); g.connect(ctx.destination);
+        o.connect(g); g.connect(out);
         o.start(st); o.stop(st + 0.36);
       });
     }
@@ -3528,7 +3850,6 @@
       document.getElementById('mode-screen').classList.remove('hidden');
     }
 
-    /* ===== MINIMIZE / RESTORE ROOM PANEL ===== */
     function minimizeRoomPanel() {
       if (!privateRoomData && !privateRoomCode) return;
       const code = (privateRoomData && privateRoomData.roomCode) || privateRoomCode || 'XXXXXX';
@@ -4258,8 +4579,8 @@
        ==============  PRESENCE  (Real-time online/offline)  =====
        ============================================================ */
     let presenceInitialized = false;
-    const userStatusRefs = {};   // uid -> ref
-    const userStatuses = {};     // uid -> { state, lastChanged }
+    const userStatusRefs = {};
+    const userStatuses = {};
 
     function initPresence() {
       if (presenceInitialized || !fbReady || !profile || !profile.uid) return;
@@ -4339,7 +4660,6 @@
       if (!fbReady) return;
       const pairId = getConversationId(profile.uid, otherUid);
 
-      // Other user's typing
       if (chatTypingRef) { try { chatTypingRef.off(); } catch(e){} chatTypingRef = null; }
       chatTypingRef = fbDB.ref('chats/' + pairId + '/typing/' + otherUid);
       chatTypingRef.on('value', (snap) => {
@@ -4361,7 +4681,6 @@
         }
       });
 
-      // Self typing cleanup on disconnect
       if (chatTypingSelfRef) { try { chatTypingSelfRef.off(); } catch(e){} chatTypingSelfRef = null; }
       chatTypingSelfRef = fbDB.ref('chats/' + pairId + '/typing/' + profile.uid);
       try { chatTypingSelfRef.onDisconnect().remove(); } catch (e) {}
@@ -4409,6 +4728,7 @@
       gameSettings.sound = !gameSettings.sound;
       soundEnabled = gameSettings.sound;
       saveSettings(); updateSettingsUI();
+      updateMasterGain();
       if (gameSettings.sound) { getAudioCtx(); showToast('🔊 সাউন্ড চালু'); }
       else showToast('🔇 সাউন্ড বন্ধ');
     }
@@ -4480,6 +4800,7 @@
       if (privateRoomData) { leaveRoomPanel(); }
 
       detachOnlineGameListeners();
+      stopTurnTimer();
       isOnlineMatch = false;
       onlineRoomCode = null;
       onlineMySeat = null;
@@ -4489,6 +4810,7 @@
 
       document.getElementById('game-wrapper').classList.remove('visible');
       document.getElementById('bet-badge').classList.remove('show');
+      document.getElementById('turn-timer').classList.remove('show');
       document.getElementById('global-room-screen').classList.add('hidden');
       document.getElementById('friends-screen').classList.add('hidden');
       document.getElementById('inbox-screen').classList.add('hidden');
@@ -4505,8 +4827,8 @@
       pawns.forEach(p => {
         p.step = -1;
         p.element.classList.remove('highlight', 'jumping');
-        p.element.style.marginLeft = '0';
-        p.element.style.marginTop = '0';
+        p.element.style.marginLeft = '0px';
+        p.element.style.marginTop = '0px';
         renderPawn(p);
       });
       turnIndex = 0;
@@ -4582,6 +4904,7 @@
     const gridCells = {};
 
     let audioCtx = null;
+    let masterGain = null;
     let soundEnabled = true;
 
     function getAudioCtx() {
@@ -4590,13 +4913,34 @@
         catch (e) { return null; }
       }
       if (audioCtx.state === 'suspended') audioCtx.resume();
+      if (!masterGain && audioCtx) {
+        try {
+          masterGain = audioCtx.createGain();
+          const effective = gameSettings.sound ? (gameSettings.volume || 1) : 0;
+          masterGain.gain.value = effective;
+          masterGain.connect(audioCtx.destination);
+        } catch (e) { masterGain = null; }
+      }
       return audioCtx;
+    }
+    function getMasterGain(ctx) {
+      if (!masterGain) getAudioCtx();
+      return masterGain || ctx.destination;
+    }
+    function updateMasterGain() {
+      if (masterGain) {
+        try {
+          const effective = gameSettings.sound ? (gameSettings.volume || 1) : 0;
+          masterGain.gain.value = effective;
+        } catch (e) {}
+      }
     }
 
     function playHopSound() {
       vibrate(12);
       if (!soundEnabled) return;
       const ctx = getAudioCtx(); if (!ctx) return;
+      const out = getMasterGain(ctx);
       const now = ctx.currentTime;
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
@@ -4607,13 +4951,14 @@
       gain.gain.setValueAtTime(0.0001, now);
       gain.gain.exponentialRampToValueAtTime(0.18, now + 0.01);
       gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.15);
-      osc.connect(gain); gain.connect(ctx.destination);
+      osc.connect(gain); gain.connect(out);
       osc.start(now); osc.stop(now + 0.16);
     }
     function playDiceRollSound() {
       vibrate(25);
       if (!soundEnabled) return;
       const ctx = getAudioCtx(); if (!ctx) return;
+      const out = getMasterGain(ctx);
       const now = ctx.currentTime;
       const clicks = [
         { t: 0.000, vol: 0.16, freq: 1500, q: 6 },
@@ -4634,7 +4979,7 @@
         const nGain = ctx.createGain();
         nGain.gain.setValueAtTime(c.vol, t);
         nGain.gain.exponentialRampToValueAtTime(0.0001, t + 0.04);
-        noise.connect(bp); bp.connect(nGain); nGain.connect(ctx.destination);
+        noise.connect(bp); bp.connect(nGain); nGain.connect(out);
         noise.start(t); noise.stop(t + 0.05);
         const osc = ctx.createOscillator();
         const oGain = ctx.createGain();
@@ -4643,7 +4988,7 @@
         osc.frequency.exponentialRampToValueAtTime(80, t + 0.035);
         oGain.gain.setValueAtTime(c.vol * 0.85, t);
         oGain.gain.exponentialRampToValueAtTime(0.0001, t + 0.045);
-        osc.connect(oGain); oGain.connect(ctx.destination);
+        osc.connect(oGain); oGain.connect(out);
         osc.start(t); osc.stop(t + 0.05);
       });
     }
@@ -4651,6 +4996,7 @@
       vibrate([40, 30, 40]);
       if (!soundEnabled) return;
       const ctx = getAudioCtx(); if (!ctx) return;
+      const out = getMasterGain(ctx);
       const now = ctx.currentTime;
       [523.25, 659.25, 783.99].forEach((freq, i) => {
         const osc = ctx.createOscillator();
@@ -4660,7 +5006,7 @@
         gain.gain.setValueAtTime(0.0001, start);
         gain.gain.exponentialRampToValueAtTime(0.22, start + 0.01);
         gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.35);
-        osc.connect(gain); gain.connect(ctx.destination);
+        osc.connect(gain); gain.connect(out);
         osc.start(start); osc.stop(start + 0.36);
       });
     }
@@ -4668,6 +5014,7 @@
       vibrate([60, 40, 80]);
       if (!soundEnabled) return;
       const ctx = getAudioCtx(); if (!ctx) return;
+      const out = getMasterGain(ctx);
       const now = ctx.currentTime;
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
@@ -4676,7 +5023,7 @@
       osc.frequency.exponentialRampToValueAtTime(70, now + 0.28);
       gain.gain.setValueAtTime(0.28, now);
       gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.32);
-      osc.connect(gain); gain.connect(ctx.destination);
+      osc.connect(gain); gain.connect(out);
       osc.start(now); osc.stop(now + 0.33);
       const bufferSize = ctx.sampleRate * 0.12;
       const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
@@ -4688,13 +5035,14 @@
       noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
       const noiseFilter = ctx.createBiquadFilter();
       noiseFilter.type = 'lowpass'; noiseFilter.frequency.value = 800;
-      noise.connect(noiseFilter); noiseFilter.connect(noiseGain); noiseGain.connect(ctx.destination);
+      noise.connect(noiseFilter); noiseFilter.connect(noiseGain); noiseGain.connect(out);
       noise.start(now);
     }
     function playSafeZoneSound() {
       vibrate([20, 20, 20]);
       if (!soundEnabled) return;
       const ctx = getAudioCtx(); if (!ctx) return;
+      const out = getMasterGain(ctx);
       const now = ctx.currentTime;
       [659.25, 783.99, 987.77, 1318.51].forEach((freq, i) => {
         const osc = ctx.createOscillator();
@@ -4704,7 +5052,7 @@
         gain.gain.setValueAtTime(0.0001, start);
         gain.gain.exponentialRampToValueAtTime(0.17, start + 0.008);
         gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.28);
-        osc.connect(gain); gain.connect(ctx.destination);
+        osc.connect(gain); gain.connect(out);
         osc.start(start); osc.stop(start + 0.30);
       });
     }
@@ -4712,6 +5060,7 @@
       vibrate([100, 50, 100, 50, 200]);
       if (!soundEnabled) return;
       const ctx = getAudioCtx(); if (!ctx) return;
+      const out = getMasterGain(ctx);
       const now = ctx.currentTime;
       [523.25, 659.25, 783.99, 1046.5, 1318.5].forEach((freq, i) => {
         const osc = ctx.createOscillator();
@@ -4722,7 +5071,7 @@
         gain.gain.setValueAtTime(0.0001, start);
         gain.gain.exponentialRampToValueAtTime(0.24, start + 0.012);
         gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.5);
-        osc.connect(gain); gain.connect(ctx.destination);
+        osc.connect(gain); gain.connect(out);
         osc.start(start); osc.stop(start + 0.52);
       });
     }
@@ -4857,9 +5206,7 @@
       });
     }
 
-    /* ===== PAWN RENDERING (Step 1 & Step 2) ===== */
     function renderPawn(pawn) {
-      // Step 1: inactive colors — hide completely
       if (!activePlayers.includes(pawn.color)) {
         pawn.element.style.display = 'none';
         return;
@@ -4889,7 +5236,6 @@
       }
     }
 
-    /* ===== Step 2: Multi-pawn overlap prevention ===== */
     function relayoutCellPawns() {
       const containers = document.querySelectorAll('.cell, .yard-spot, .home-spot');
       containers.forEach(cell => {
@@ -4932,7 +5278,7 @@
           : `⏳ ${activeColor.toUpperCase()}-এর চাল...`;
       } else {
         document.getElementById('status-text').innerText =
-          `${activeColor.toUpperCase()}-এর চাল! ডায়াইসে চাপ দিন।`;
+          `${activeColor.toUpperCase()}-এর চাল! আপনার ডায়াইসে চাপ দিন।`;
       }
     }
     function nextTurn() {
@@ -5015,10 +5361,24 @@
         default:     return 260;
       }
     }
+
+    /* ============ FIXED PAWN MOVE ANIMATION ============
+       আগের ভার্সনে fromStep-এ একটি অতিরিক্ত "বাউন্স" হতো
+       (pawn ইতিমধ্যে যে ঘরে আছে সেখানে আবার লাফাতো)।
+       এখন প্রতিটি ধাপে ঠিক ১টি হপ হবে এবং
+       pawn শেষে সঠিক ঘরে পৌঁছাবে। ========================= */
     function animatePawnMove(pawn, fromStep, toStep, done) {
-      let current = fromStep;
       const stepMs = getStepMs();
+      pawn.step = fromStep;
+      renderPawn(pawn);
+
+      let current = fromStep;
       const hop = () => {
+        if (current >= toStep) {
+          setTimeout(done, stepMs * 0.8);
+          return;
+        }
+        current++;
         pawn.step = current;
         renderPawn(pawn);
         playHopSound();
@@ -5030,12 +5390,15 @@
           pawn.element.removeEventListener('animationend', cleanup);
         };
         pawn.element.addEventListener('animationend', cleanup);
-        if (current >= toStep) { setTimeout(done, stepMs * 0.9); return; }
-        current++;
+        if (current >= toStep) {
+          setTimeout(done, stepMs * 0.8);
+          return;
+        }
         setTimeout(hop, stepMs);
       };
-      hop();
+      setTimeout(hop, stepMs * 0.4);
     }
+
     function onPawnClick(pawn) {
       if (!activePawnsToMove.includes(pawn)) return;
 
@@ -5170,6 +5533,24 @@
       canRoll = false;
       playWinSound();
       gameActive = false;
+      stopTurnTimer();
+
+      // ---- ম্যাচ হিস্টোরি রেকর্ড ----
+      try {
+        const myColor = isOnlineMatch ? onlineMySeat : 'blue';
+        const betAmt = currentBetInfo ? currentBetInfo.amount : 0;
+        const prizeAmt = (isPlayerWin && currentBetInfo) ? currentBetInfo.prize : 0;
+        addMatchToHistory({
+          mode: activePlayers.length === 2 ? '1v1' : '4p',
+          result: isPlayerWin ? 'win' : 'loss',
+          bet: betAmt,
+          prize: prizeAmt,
+          myColor: myColor,
+          winnerColor: winnerColor
+        });
+        updateProfileMenuCounts();
+      } catch (e) { console.warn('History record failed', e); }
+      // ------------------------------
 
       let prizeText = '';
       if (currentBetInfo) {
@@ -5256,6 +5637,7 @@
         onlineWinnerHandled = true;
         handleMatchWin(game.winner);
       }
+      startTurnTimer();
     }
 
     function attachOnlineGameListeners() {
@@ -5307,6 +5689,7 @@
               });
             }
           }
+          stopTurnTimer();
           handleMatchWin(game.winner);
         }
         return;
@@ -5332,6 +5715,9 @@
         }
         canRoll = (game.turn === onlineMySeat) && game.turnState === 'rolling';
       }
+
+      // প্রতি state আপডেটে টার্ন টাইমার রিফ্রেশ
+      startTurnTimer();
     }
 
     function applyOnlineDice(dice) {
@@ -5522,6 +5908,41 @@
       }).catch(()=>{});
     }
 
+    /* ============ TURN TIMER UI ============ */
+    function startTurnTimer() {
+      if (!isOnlineMatch) {
+        const el = document.getElementById('turn-timer');
+        if (el) el.classList.remove('show');
+        if (turnTimerInterval) clearInterval(turnTimerInterval);
+        turnTimerInterval = null;
+        return;
+      }
+      if (!onlineGameState) return;
+      const elapsed = Date.now() - (onlineGameState.turnStartedAt || 0);
+      const remaining = Math.max(0, ONLINE_TURN_TIMEOUT_MS - elapsed);
+      turnTimerEnd = Date.now() + remaining;
+      const el = document.getElementById('turn-timer');
+      if (el) el.classList.add('show');
+      if (turnTimerInterval) clearInterval(turnTimerInterval);
+      updateTurnTimerDisplay();
+      turnTimerInterval = setInterval(updateTurnTimerDisplay, 500);
+    }
+    function stopTurnTimer() {
+      if (turnTimerInterval) clearInterval(turnTimerInterval);
+      turnTimerInterval = null;
+      const el = document.getElementById('turn-timer');
+      if (el) el.classList.remove('show', 'warn');
+    }
+    function updateTurnTimerDisplay() {
+      const el = document.getElementById('turn-timer');
+      const txt = document.getElementById('turn-timer-text');
+      if (!el || !txt) return;
+      const remaining = Math.max(0, turnTimerEnd - Date.now());
+      const secs = Math.ceil(remaining / 1000);
+      txt.innerText = secs;
+      el.classList.toggle('warn', secs <= 10);
+    }
+
     async function tryRestoreActiveRoom() {
       let code = null;
       try { code = localStorage.getItem('ludoking_active_room'); } catch(e){}
@@ -5546,10 +5967,12 @@
             `এন্ট্রি: ${formatCoins(room.amount)} · প্রাইজ: ${formatCoins(room.prize)}`;
           document.getElementById('bet-badge').classList.add('show');
         }
+        window.__matchRestored = true;
         document.getElementById('splash').classList.add('hidden');
         document.getElementById('mode-screen').classList.add('hidden');
         document.getElementById('game-wrapper').classList.add('visible');
         startGame(room.mode, isBetMatch, { mode: room.mode, slots: room.slots, roomCode: code });
+        showToast('🔄 চলমান ম্যাচে ফিরে এসেছেন!');
         return true;
       } catch (e) {
         console.warn('Restore failed', e);
@@ -5637,6 +6060,7 @@
         });
       } else {
         updateTurnUI();
+        stopTurnTimer();
       }
     }
 
@@ -6601,7 +7025,6 @@
       document.getElementById('chat-header-avatar').innerText = avatar || '👤';
       document.getElementById('chat-header-name').innerText = name || 'User';
 
-      // Set status
       updateChatHeaderStatus(userStatuses[uid] || { state: 'offline' });
 
       markConversationRead(profile.uid, uid);
@@ -6644,7 +7067,6 @@
     function renderChatMessages() {
       if (!currentChatUserId) return;
       const body = document.getElementById('chat-body');
-      // Preserve typing indicator
       const typingEl = document.getElementById('chat-typing-indicator');
       const conv = getConversation(profile.uid, currentChatUserId);
       body.innerHTML = '';
@@ -6735,7 +7157,6 @@
     function simulateMockReply(myUid, mockUid) {
       const other = usersDB[mockUid];
       if (!other) return;
-
       if (isUserBlockedByMe(mockUid)) return;
 
       const delay = 1500 + Math.random() * 2000;
@@ -6795,6 +7216,7 @@
           try {
             const ctx = getAudioCtx();
             if (ctx) {
+              const out = getMasterGain(ctx);
               const osc = ctx.createOscillator();
               const gain = ctx.createGain();
               osc.type = 'sine';
@@ -6803,7 +7225,7 @@
               gain.gain.setValueAtTime(0.0001, ctx.currentTime);
               gain.gain.exponentialRampToValueAtTime(0.15, ctx.currentTime + 0.01);
               gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.22);
-              osc.connect(gain); gain.connect(ctx.destination);
+              osc.connect(gain); gain.connect(out);
               osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.23);
             }
           } catch (e) {}
@@ -6826,7 +7248,6 @@
       }
     });
 
-    // Chat typing input listener
     (function initChatInputListener(){
       const inp = document.getElementById('chat-input');
       if (!inp) return;
@@ -6983,7 +7404,6 @@
       el.addEventListener('contextmenu', (e) => e.preventDefault());
     })();
 
-    // Re-layout pawns when viewport changes
     window.addEventListener('resize', () => { try { relayoutCellPawns(); } catch(e){} });
     window.addEventListener('orientationchange', () => { setTimeout(() => { try { relayoutCellPawns(); } catch(e){} }, 200); });
 
@@ -7011,7 +7431,10 @@
 
       setTimeout(() => {
         document.getElementById('splash').classList.add('hidden');
-        document.getElementById('mode-screen').classList.remove('hidden');
+        const gw = document.getElementById('game-wrapper');
+        if (!gw.classList.contains('visible')) {
+          document.getElementById('mode-screen').classList.remove('hidden');
+        }
       }, 2300);
 
       setTimeout(maybeSendDemoRequests, 5000);
